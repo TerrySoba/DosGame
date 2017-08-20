@@ -1,0 +1,5 @@
+*.o
+*.O
+*.exe
+*.EXE
+ERRORS

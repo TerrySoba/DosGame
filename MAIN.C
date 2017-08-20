@@ -186,7 +186,7 @@ int main(int argc, char* argv[])
 
     // load music
     MIDI *music;
-    music = load_midi("pdmid\\61dws.mid");
+    music = load_midi("61dws.mid");
     // music = load_midi("smf.mid");
     // music = load_midi("jab.mid");
     // music = load_midi("thttts.mid");

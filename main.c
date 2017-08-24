@@ -102,19 +102,28 @@ void clearBullets()
     }
 }
 
+#define SPINNER_COUNT 8
+#define SPINNER_OFFSET (SINE_TABLE_SIZE / SPINNER_COUNT)
+
+
+int startScreenSkew = 0;
 
 void drawStartScreen(BITMAP* buffer, BITMAP* bg, BITMAP* spinner)
 {
     // draw bg image to buffer
     blit(bg, buffer, 0, 0, 0, 0, bg->w, bg->h);
 
-    int x = sineTable[gameTicks % SINE_TABLE_SIZE] + 100;
-    int y = sineTable[(gameTicks + SINE_TABLE_SIZE/4) % SINE_TABLE_SIZE] + 100;
+    startScreenSkew++;
 
-    draw_sprite(buffer, spinner, x, y);
+    for (size_t i = 0; i < SPINNER_COUNT; ++i)
+    {
+        int x = sineTable[(gameTicks + SPINNER_OFFSET * i + (startScreenSkew >> 2)) % SINE_TABLE_SIZE] + 150;
+        int y = sineTable[(gameTicks + SPINNER_OFFSET * i + SINE_TABLE_SIZE/4)      % SINE_TABLE_SIZE] + 110;
 
-    textprintf_ex(buffer, font, 150, 230, makecol(255, 255, 255), makecol(0, 0, 0), "x:%3d y:%3d", x, y);
+        draw_sprite(buffer, spinner, x, y);
+    }
 
+    textprintf_ex(buffer, font, 50, 100, makecol(255, 255, 255), makecol(0, 0, 0), "Press SPACEBAR to start game!");
 }
 
 void fillSineTable()
@@ -250,7 +259,7 @@ int main(int argc, char* argv[])
         textprintf_ex(buffer, font, 200, 230, makecol(255, 255, 255), makecol(0, 0, 0), "Score: %06d", score);
         textprintf_ex(buffer, font, 10, 230, makecol(255, 255, 255), makecol(0, 0, 0), "Lives: %2d", lives);
 
-        // drawStartScreen(buffer, bg, enemySprite);
+        drawStartScreen(buffer, bg, enemySprite);
 
         // wait for vsync, then blit buffer to video memory
         vsync();

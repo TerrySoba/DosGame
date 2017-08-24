@@ -1,6 +1,6 @@
 
 OBJ = main.o gm_state.o
-CFLAGS = -Wall -Os -pedantic -fdata-sections -ffunction-sections -s
+CFLAGS = -Wall -O3 -pedantic -fdata-sections -ffunction-sections -s
 LDFLAGS = -Wl,--gc-sections -s -lalleg
 
 game.exe: $(OBJ)

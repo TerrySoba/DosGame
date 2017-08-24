@@ -1,7 +1,10 @@
+#include "gm_state.h"
+
 #include <stdio.h>
 #include <allegro.h>
 #include <string.h>
 #include <stdlib.h>
+#include <math.h>
 
 void abort_on_error(const char* message)
 {
@@ -11,42 +14,22 @@ void abort_on_error(const char* message)
     exit(1);
 }
 
-long long gameTicks;
-int score;
-
 void incrementTicks()
 {
     ++gameTicks;
 }
-
-#define SCREEN_WIDTH 320
-#define SCREEN_HEIGHT 240
-
-typedef struct {
-    int x;
-    int y;
-    int dx;
-    int dy;
-} Bullet;
-
-#define MAX_BULLETS 5
-Bullet bullets[MAX_BULLETS];
-
-typedef struct {
-    int x;
-    int y;
-    int dx;
-    int dy;
-} Enemy;
-
-Enemy enemy;
-
 
 typedef struct
 {
     int x;
     int y;
 } Point;
+
+
+#define SINE_TABLE_SIZE 256
+
+int sineTable[SINE_TABLE_SIZE];
+
 
 int collision(Bullet* bullet, Enemy* enemy)
 {
@@ -120,11 +103,37 @@ void clearBullets()
 }
 
 
+void drawStartScreen(BITMAP* buffer, BITMAP* bg, BITMAP* spinner)
+{
+    // draw bg image to buffer
+    blit(bg, buffer, 0, 0, 0, 0, bg->w, bg->h);
+
+    int x = sineTable[gameTicks % SINE_TABLE_SIZE] + 100;
+    int y = sineTable[(gameTicks + SINE_TABLE_SIZE/4) % SINE_TABLE_SIZE] + 100;
+
+    draw_sprite(buffer, spinner, x, y);
+
+    textprintf_ex(buffer, font, 150, 230, makecol(255, 255, 255), makecol(0, 0, 0), "x:%3d y:%3d", x, y);
+
+}
+
+void fillSineTable()
+{
+    for (int i = 0; i < SINE_TABLE_SIZE; ++i)
+    {
+        sineTable[i] = sin(1.0 / SINE_TABLE_SIZE * i * M_PI * 2) * 100;
+    }
+}
+
+
 int main(int argc, char* argv[])
 {
+    fillSineTable();
+
 
     long long physicsCount = 0;
     score = 0;
+    lives = 0;
     gameTicks = 0;
 
     Point shipPos = {0, 0};
@@ -187,6 +196,7 @@ int main(int argc, char* argv[])
     // load music
     MIDI *music;
     music = load_midi("61dws.mid");
+    // music = load_midi("skm3.mid");
     // music = load_midi("smf.mid");
     // music = load_midi("jab.mid");
     // music = load_midi("thttts.mid");
@@ -238,12 +248,13 @@ int main(int argc, char* argv[])
 
         // draw score text
         textprintf_ex(buffer, font, 200, 230, makecol(255, 255, 255), makecol(0, 0, 0), "Score: %06d", score);
+        textprintf_ex(buffer, font, 10, 230, makecol(255, 255, 255), makecol(0, 0, 0), "Lives: %2d", lives);
+
+        // drawStartScreen(buffer, bg, enemySprite);
 
         // wait for vsync, then blit buffer to video memory
         vsync();
         blit(buffer, screen, 0, 0, 0, 0, buffer->w, buffer->h);
-
-
 
         if (key[KEY_SPACE])
         {

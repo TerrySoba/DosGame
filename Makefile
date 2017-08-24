@@ -1,5 +1,5 @@
 
-OBJ = main.o
+OBJ = main.o gm_state.o
 CFLAGS = -Wall -Os -pedantic -fdata-sections -ffunction-sections -s
 LDFLAGS = -Wl,--gc-sections -s -lalleg
 
@@ -10,7 +10,7 @@ game.exe: $(OBJ)
 	gcc $(CFLAGS) -c $<
 
 clean:
-	del game.exe
-	del $(OBJ)
+	rm game.exe
+	rm $(OBJ)
 
 

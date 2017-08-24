@@ -47,8 +47,8 @@ int collision(Bullet* bullet, Enemy* enemy)
     corners[1].y = bullet->y;
     corners[2].x = bullet->x + bulletWidth;
     corners[2].y = bullet->y + bulletHeight;
-    corners[2].x = bullet->x;
-    corners[2].y = bullet->y + bulletHeight;
+    corners[3].x = bullet->x;
+    corners[3].y = bullet->y + bulletHeight;
 
     for (int i = 0; i < 4; ++i)
     {
@@ -135,6 +135,18 @@ void fillSineTable()
 }
 
 
+typedef enum _GameState
+{
+    START_SCREEN,
+    LEVEL1,
+    DEATH,
+} GameState;
+
+
+GameState gameState;
+
+
+
 int main(int argc, char* argv[])
 {
     fillSineTable();
@@ -219,62 +231,78 @@ int main(int argc, char* argv[])
 
     shipPos.y = SCREEN_HEIGHT - 50;
 
+
+    gameState = START_SCREEN;
+
+    // enter event loop
     while(key[KEY_ESC]==0)
     {
-
-
-        if (key[KEY_RIGHT])
-            shipPos.x += 4;
-
-        if (key[KEY_LEFT])
-            shipPos.x -= 4;
-
-
-        // shipPos.y = mouse_y;
-
-
-        // now calc physics
-        while (physicsCount < gameTicks)
+        switch(gameState)
         {
-            calcPhysics();
-            ++physicsCount;
+        case START_SCREEN:
+            drawStartScreen(buffer, bg, enemySprite);
+
+            if (key[KEY_SPACE])
+            {
+                gameState = LEVEL1;
+            }
+
+            break;
+
+        case LEVEL1:
+            if (key[KEY_RIGHT])
+                shipPos.x += 4;
+
+            if (key[KEY_LEFT])
+                shipPos.x -= 4;
+
+            if (key[KEY_SPACE])
+            {
+                Bullet* bullet = getAvailableBullet();
+                if (bullet)
+                {
+                    bullet->dy = -3;
+                    bullet->x = shipPos.x + 14;
+                    bullet->y = shipPos.y;
+                }
+            }
+
+            // shipPos.y = mouse_y;
+
+
+            // now calc physics
+            while (physicsCount < gameTicks)
+            {
+                calcPhysics();
+                ++physicsCount;
+            }
+
+            // draw bg image to buffer
+            blit(bg, buffer, 0, 0, 0, 0, bg->w, bg->h);
+
+            // draw bullets
+            for (int i = 0; i < MAX_BULLETS; ++i)
+            {
+                draw_sprite(buffer, bullet, bullets[i].x, bullets[i].y);
+            }
+
+            // draw enemy
+            draw_sprite(buffer, enemySprite, enemy.x, enemy.y);
+
+            // draw the player ship
+            draw_sprite(buffer, ship, shipPos.x, shipPos.y);
+
+            // draw score text
+            textprintf_ex(buffer, font, 200, 230, makecol(255, 255, 255), makecol(0, 0, 0), "Score: %06d", score);
+            textprintf_ex(buffer, font, 10, 230, makecol(255, 255, 255), makecol(0, 0, 0), "Lives: %2d", lives);
+            break;
         }
 
-        // draw bg image to buffer
-        blit(bg, buffer, 0, 0, 0, 0, bg->w, bg->h);
-
-        // draw bullets
-        for (int i = 0; i < MAX_BULLETS; ++i)
-        {
-            draw_sprite(buffer, bullet, bullets[i].x, bullets[i].y);
-        }
-
-        // draw enemy
-        draw_sprite(buffer, enemySprite, enemy.x, enemy.y);
-
-        // draw the player ship
-        draw_sprite(buffer, ship, shipPos.x, shipPos.y);
-
-        // draw score text
-        textprintf_ex(buffer, font, 200, 230, makecol(255, 255, 255), makecol(0, 0, 0), "Score: %06d", score);
-        textprintf_ex(buffer, font, 10, 230, makecol(255, 255, 255), makecol(0, 0, 0), "Lives: %2d", lives);
-
-        drawStartScreen(buffer, bg, enemySprite);
 
         // wait for vsync, then blit buffer to video memory
         vsync();
         blit(buffer, screen, 0, 0, 0, 0, buffer->w, buffer->h);
 
-        if (key[KEY_SPACE])
-        {
-            Bullet* bullet = getAvailableBullet();
-            if (bullet)
-            {
-                bullet->dy = -3;
-                bullet->x = shipPos.x + 14;
-                bullet->y = shipPos.y;
-            }
-        }
 
     }
 

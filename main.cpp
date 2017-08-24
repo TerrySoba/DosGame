@@ -1,10 +1,10 @@
 #include "gm_state.h"
 
-#include <stdio.h>
 #include <allegro.h>
-#include <string.h>
-#include <stdlib.h>
-#include <math.h>
+#include <string>
+#include <cstdlib>
+#include <cmath>
+#include <iostream>
 
 void abort_on_error(const char* message)
 {
@@ -19,11 +19,11 @@ void incrementTicks()
     ++gameTicks;
 }
 
-typedef struct
+struct Point
 {
     int x;
     int y;
-} Point;
+};
 
 
 #define SINE_TABLE_SIZE 256
@@ -151,7 +151,6 @@ int main(int argc, char* argv[])
 {
     fillSineTable();
 
-
     long long physicsCount = 0;
     score = 0;
     lives = 0;
@@ -159,7 +158,7 @@ int main(int argc, char* argv[])
 
     Point shipPos = {0, 0};
 
-    printf("Starting game!");
+    std::cout << "Starting game!" << std::endl;
 
     if (allegro_init() != 0)
     {
@@ -307,7 +306,7 @@ int main(int argc, char* argv[])
     }
 
     set_gfx_mode(GFX_TEXT, 0, 0, 0, 0);
-    printf("Game by yoshi252 (2017)\nThank you for playing!\n");
+    std::cout << "Game by yoshi252 (2017)\nThank you for playing!" << std::endl;
 
     return 0;
 }

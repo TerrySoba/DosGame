@@ -11,5 +11,3 @@ game.exe: $(OBJ)
 clean:
 	rm game.exe
 	rm $(OBJ)
-
-

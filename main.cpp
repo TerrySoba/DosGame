@@ -3,6 +3,7 @@
 #include "point.h"
 #include "image_utils.h"
 #include "first_enemy.h"
+#include "mikmod_sound.h"
 
 #include <allegro.h>
 #include <cstdlib>
@@ -150,6 +151,8 @@ GameState gameState;
 
 int main(int argc, char* argv[])
 {
+    MikmodSound sound("music/test2.xm");
+
     try
     {
         fillSineTable();
@@ -178,8 +181,8 @@ int main(int argc, char* argv[])
         // if (install_mouse() == -1)
         //     abort_on_error("Could not install mouse.");
 
-        if (install_sound(DIGI_AUTODETECT, MIDI_AUTODETECT, NULL) != 0)
-            abort_on_error("Could not install sound.");
+//        if (install_sound(DIGI_AUTODETECT, MIDI_AUTODETECT, NULL) != 0)
+//            abort_on_error("Could not install sound.");
 
         set_color_depth(8);
 
@@ -216,15 +219,15 @@ int main(int argc, char* argv[])
         enemy.y = 100;
 
         // load music
-        MIDI *music;
-        music = load_midi("music/61dws.mid");
+//        MIDI *music;
+//        music = load_midi("music/61dws.mid");
         // music = load_midi("skm3.mid");
         // music = load_midi("smf.mid");
         // music = load_midi("jab.mid");
         // music = load_midi("thttts.mid");
         // music = load_midi("mm2wily1.mid");
-        if (!music)
-           abort_on_error("Couldn't load background music!");
+//        if (!music)
+//           abort_on_error("Couldn't load background music!");
 
 
         std::vector<std::shared_ptr<EnemyBase>> enemies;
@@ -322,6 +325,7 @@ int main(int argc, char* argv[])
             vsync();
             blit(buffer.get(), screen, 0, 0, 0, 0, buffer->w, buffer->h);
 
+            sound.update();
 
         }
 

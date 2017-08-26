@@ -203,10 +203,10 @@ int main(int argc, char* argv[])
 
         set_palette(palette);
 
-        auto ship = loadBitmap("ship.pcx");
-        auto enemySprite = loadBitmap("enemy.pcx");
-        auto bulletImage = loadBitmap("bullet.pcx");
-        auto bg = loadBitmap("space_bg.pcx");
+        auto ship = loadBitmap("gfx/ship.pcx");
+        auto enemySprite = loadBitmap("gfx/enemy.pcx");
+        auto bulletImage = loadBitmap("gfx/bullet.pcx");
+        auto bg = loadBitmap("gfx/space_bg.pcx");
 
         std::shared_ptr<BITMAP> buffer(create_bitmap(320,240), [](auto ptr){ destroy_bitmap(ptr);});
 
@@ -217,7 +217,7 @@ int main(int argc, char* argv[])
 
         // load music
         MIDI *music;
-        music = load_midi("61dws.mid");
+        music = load_midi("music/61dws.mid");
         // music = load_midi("skm3.mid");
         // music = load_midi("smf.mid");
         // music = load_midi("jab.mid");
@@ -230,7 +230,7 @@ int main(int argc, char* argv[])
         std::vector<std::shared_ptr<EnemyBase>> enemies;
 
 
-        enemies.push_back(std::make_shared<FirstEnemy>("enemy.pcx"));
+        enemies.push_back(std::make_shared<FirstEnemy>("gfx/enemy.pcx"));
 
 
         // play_midi(music, 1);
@@ -274,7 +274,6 @@ int main(int argc, char* argv[])
                 }
 
                 // shipPos.y = mouse_y;
-
 
                 // now calc physics
                 while (physicsCount < gameTicks)

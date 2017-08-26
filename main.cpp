@@ -1,10 +1,17 @@
 #include "gm_state.h"
 
+#include "point.h"
+#include "image_utils.h"
+#include "first_enemy.h"
+
 #include <allegro.h>
-#include <string>
 #include <cstdlib>
 #include <cmath>
-#include <iostream>
+#include <cstdio>
+#include <memory>
+#include <exception>
+#include <cstring>
+#include <array>
 
 void abort_on_error(const char* message)
 {
@@ -19,11 +26,6 @@ void incrementTicks()
     ++gameTicks;
 }
 
-struct Point
-{
-    int x;
-    int y;
-};
 
 
 #define SINE_TABLE_SIZE 256
@@ -31,7 +33,7 @@ struct Point
 int sineTable[SINE_TABLE_SIZE];
 
 
-int collision(Bullet* bullet, Enemy* enemy)
+bool collision(const Bullet& bullet, const Enemy& enemy)
 {
     int bulletWidth = 4;
     int bulletHeight = 4;
@@ -41,39 +43,39 @@ int collision(Bullet* bullet, Enemy* enemy)
 
     // check if at least one of the corners of the bullets lies inside of the enemy
     Point corners[4];
-    corners[0].x = bullet->x;
-    corners[0].y = bullet->y;
-    corners[1].x = bullet->x + bulletWidth;
-    corners[1].y = bullet->y;
-    corners[2].x = bullet->x + bulletWidth;
-    corners[2].y = bullet->y + bulletHeight;
-    corners[3].x = bullet->x;
-    corners[3].y = bullet->y + bulletHeight;
+    corners[0].x = bullet.x;
+    corners[0].y = bullet.y;
+    corners[1].x = bullet.x + bulletWidth;
+    corners[1].y = bullet.y;
+    corners[2].x = bullet.x + bulletWidth;
+    corners[2].y = bullet.y + bulletHeight;
+    corners[3].x = bullet.x;
+    corners[3].y = bullet.y + bulletHeight;
 
     for (int i = 0; i < 4; ++i)
     {
-        if (corners[i].x >= enemy->x && corners[i].x < enemy->x + enemyWidth &&
-            corners[i].y >= enemy->y && corners[i].y < enemy->y + enemyHeight)
+        if (corners[i].x >= enemy.x && corners[i].x < enemy.x + enemyWidth &&
+            corners[i].y >= enemy.y && corners[i].y < enemy.y + enemyHeight)
         {
-            return 1;
+            return true;
         }
     }
-    return 0;
+    return false;
 }
 
 
 void calcPhysics()
 {
-    for (int i = 0; i < MAX_BULLETS; ++i)
+    for (auto& bullet : bullets)
     {
-        bullets[i].x += bullets[i].dx;
-        bullets[i].y += bullets[i].dy;
+        bullet.x += bullet.dx;
+        bullet.y += bullet.dy;
     }
 
     // check for collision
-    for (int i = 0; i < MAX_BULLETS; ++i)
+    for (auto& bullet : bullets)
     {
-        if (collision(&bullets[i], &enemy))
+        if (collision(bullet, enemy))
         {
             ++score;
             enemy.x = rand() % (SCREEN_WIDTH - 16);
@@ -86,19 +88,19 @@ void calcPhysics()
 
 Bullet* getAvailableBullet()
 {
-    for (int i = 0; i < MAX_BULLETS; ++i)
+    for (auto& bullet : bullets)
     {
-        if (bullets[i].y + 4 < 0)
-            return &bullets[i];
+        if (bullet.y + 4 < 0)
+            return &bullet;
     }
     return NULL;
 }
 
 void clearBullets()
 {
-    for (int i = 0; i < MAX_BULLETS; ++i)
+    for (auto& bullet :  bullets)
     {
-        bullets[i].y = -100;
+        bullet.y = -100;
     }
 }
 
@@ -146,167 +148,197 @@ typedef enum _GameState
 GameState gameState;
 
 
-
 int main(int argc, char* argv[])
 {
-    fillSineTable();
-
-    long long physicsCount = 0;
-    score = 0;
-    lives = 0;
-    gameTicks = 0;
-
-    Point shipPos = {0, 0};
-
-    std::cout << "Starting game!" << std::endl;
-
-    if (allegro_init() != 0)
+    try
     {
-        fprintf(stderr, "Could not init allegro...");
-        exit(1);
-    }
+        fillSineTable();
 
-    if (install_timer() != 0)
-        abort_on_error("Could not install timer.");
+        long long physicsCount = 0;
+        score = 0;
+        lives = 0;
+        gameTicks = 0;
 
-    if (install_keyboard() != 0)
-        abort_on_error("Could not install keyboard.");
+        Point shipPos = {0, 0};
 
-    // if (install_mouse() == -1)
-    //     abort_on_error("Could not install mouse.");
+        printf("Starting game!\n");
 
-    if (install_sound(DIGI_AUTODETECT, MIDI_AUTODETECT, NULL) != 0)
-        abort_on_error("Could not install sound.");
-
-    set_color_depth(8);
-
-    if (set_gfx_mode(GFX_MODEX, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0) != 0)
-       abort_on_error("Could not set gfx mode.");
-
-
-    install_int_ex(incrementTicks, BPS_TO_TIMER(120));
-
-
-    PALETTE palette;
-
-    int i = 0;
-
-    for (i = 0; i < PAL_SIZE; ++i)
-    {
-        palette[i].r = (i >> 2) * 0;
-        palette[i].g = (i >> 2);
-        palette[i].b = (i >> 2) / 2;
-    }
-
-    set_palette(palette);
-
-    BITMAP* ship = load_bitmap("ship.pcx", NULL);
-    BITMAP* enemySprite = load_bitmap("enemy.pcx", NULL);
-    BITMAP* bullet = load_bitmap("bullet.pcx", NULL);
-    BITMAP* bg = load_bitmap("space_bg.pcx", NULL);
-    BITMAP* buffer = create_bitmap(320,240);
-
-
-    memset(bullets, 0, sizeof(Bullet) * MAX_BULLETS);
-    clearBullets();
-
-    enemy.x = 100;
-    enemy.y = 100;
-
-    // load music
-    MIDI *music;
-    music = load_midi("61dws.mid");
-    // music = load_midi("skm3.mid");
-    // music = load_midi("smf.mid");
-    // music = load_midi("jab.mid");
-    // music = load_midi("thttts.mid");
-    // music = load_midi("mm2wily1.mid");
-    if (!music)
-       abort_on_error("Couldn't load background music!");
-
-
-
-    // play_midi(music, 1);
-
-    shipPos.y = SCREEN_HEIGHT - 50;
-
-
-    gameState = START_SCREEN;
-
-    // enter event loop
-    while(key[KEY_ESC]==0)
-    {
-        switch(gameState)
+        if (allegro_init() != 0)
         {
-        case START_SCREEN:
-            drawStartScreen(buffer, bg, enemySprite);
-
-            if (key[KEY_SPACE])
-            {
-                gameState = LEVEL1;
-            }
-
-            break;
-
-        case LEVEL1:
-            if (key[KEY_RIGHT])
-                shipPos.x += 4;
-
-            if (key[KEY_LEFT])
-                shipPos.x -= 4;
-
-            if (key[KEY_SPACE])
-            {
-                Bullet* bullet = getAvailableBullet();
-                if (bullet)
-                {
-                    bullet->dy = -3;
-                    bullet->x = shipPos.x + 14;
-                    bullet->y = shipPos.y;
-                }
-            }
-
-            // shipPos.y = mouse_y;
-
-
-            // now calc physics
-            while (physicsCount < gameTicks)
-            {
-                calcPhysics();
-                ++physicsCount;
-            }
-
-            // draw bg image to buffer
-            blit(bg, buffer, 0, 0, 0, 0, bg->w, bg->h);
-
-            // draw bullets
-            for (int i = 0; i < MAX_BULLETS; ++i)
-            {
-                draw_sprite(buffer, bullet, bullets[i].x, bullets[i].y);
-            }
-
-            // draw enemy
-            draw_sprite(buffer, enemySprite, enemy.x, enemy.y);
-
-            // draw the player ship
-            draw_sprite(buffer, ship, shipPos.x, shipPos.y);
-
-            // draw score text
-            textprintf_ex(buffer, font, 200, 230, makecol(255, 255, 255), makecol(0, 0, 0), "Score: %06d", score);
-            textprintf_ex(buffer, font, 10, 230, makecol(255, 255, 255), makecol(0, 0, 0), "Lives: %2d", lives);
-            break;
+            fprintf(stderr, "Could not init allegro...");
+            exit(1);
         }
 
+        if (install_timer() != 0)
+            abort_on_error("Could not install timer.");
 
-        // wait for vsync, then blit buffer to video memory
-        vsync();
-        blit(buffer, screen, 0, 0, 0, 0, buffer->w, buffer->h);
+        if (install_keyboard() != 0)
+            abort_on_error("Could not install keyboard.");
+
+        // if (install_mouse() == -1)
+        //     abort_on_error("Could not install mouse.");
+
+        if (install_sound(DIGI_AUTODETECT, MIDI_AUTODETECT, NULL) != 0)
+            abort_on_error("Could not install sound.");
+
+        set_color_depth(8);
+
+        if (set_gfx_mode(GFX_MODEX, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0) != 0)
+           abort_on_error("Could not set gfx mode.");
 
 
+        install_int_ex(incrementTicks, BPS_TO_TIMER(120));
+
+
+        PALETTE palette;
+
+        int i = 0;
+
+        for (i = 0; i < PAL_SIZE; ++i)
+        {
+            palette[i].r = (i >> 2) * 0;
+            palette[i].g = (i >> 2);
+            palette[i].b = (i >> 2) / 2;
+        }
+
+        set_palette(palette);
+
+        auto ship = loadBitmap("ship.pcx");
+        auto enemySprite = loadBitmap("enemy.pcx");
+        auto bulletImage = loadBitmap("bullet.pcx");
+        auto bg = loadBitmap("space_bg.pcx");
+
+        std::shared_ptr<BITMAP> buffer(create_bitmap(320,240), [](auto ptr){ destroy_bitmap(ptr);});
+
+        clearBullets();
+
+        enemy.x = 100;
+        enemy.y = 100;
+
+        // load music
+        MIDI *music;
+        music = load_midi("61dws.mid");
+        // music = load_midi("skm3.mid");
+        // music = load_midi("smf.mid");
+        // music = load_midi("jab.mid");
+        // music = load_midi("thttts.mid");
+        // music = load_midi("mm2wily1.mid");
+        if (!music)
+           abort_on_error("Couldn't load background music!");
+
+
+        std::vector<std::shared_ptr<EnemyBase>> enemies;
+
+
+        enemies.push_back(std::make_shared<FirstEnemy>("enemy.pcx"));
+
+
+        // play_midi(music, 1);
+
+        shipPos.y = SCREEN_HEIGHT - 50;
+
+
+        gameState = START_SCREEN;
+
+        // enter event loop
+        while(key[KEY_ESC]==0)
+        {
+            switch(gameState)
+            {
+            case START_SCREEN:
+                drawStartScreen(buffer.get(), bg.get(), enemySprite.get());
+
+                if (key[KEY_SPACE])
+                {
+                    gameState = LEVEL1;
+                }
+
+                break;
+
+            case LEVEL1:
+                if (key[KEY_RIGHT])
+                    shipPos.x += 4;
+
+                if (key[KEY_LEFT])
+                    shipPos.x -= 4;
+
+                if (key[KEY_SPACE])
+                {
+                    Bullet* bullet = getAvailableBullet();
+                    if (bullet)
+                    {
+                        bullet->dy = -3;
+                        bullet->x = shipPos.x + 14;
+                        bullet->y = shipPos.y;
+                    }
+                }
+
+                // shipPos.y = mouse_y;
+
+
+                // now calc physics
+                while (physicsCount < gameTicks)
+                {
+                    calcPhysics();
+                    ++physicsCount;
+                }
+
+                for (auto enemy : enemies)
+                {
+                    enemy->act(Rect{shipPos.x,shipPos.y, ship->w, ship->h}, bullets);
+                }
+
+                // draw bg image to buffer
+                blit(bg.get(), buffer.get(), 0, 0, 0, 0, bg->w, bg->h);
+
+                // draw bullets
+                for (const auto& bullet : bullets)
+                {
+                    draw_sprite(buffer.get(), bulletImage.get(), bullet.x, bullet.y);
+                }
+
+
+                // draw enemies
+                for (auto enemy : enemies)
+                {
+                    const auto& pos = enemy->getPos();
+                    draw_sprite(buffer.get(), enemy->getBitmap(), pos.x, pos.y);
+                }
+
+
+                // draw enemy
+                draw_sprite(buffer.get(), enemySprite.get(), enemy.x, enemy.y);
+
+                // draw the player ship
+                draw_sprite(buffer.get(), ship.get(), shipPos.x, shipPos.y);
+
+                // draw score text
+                textprintf_ex(buffer.get(), font, 200, 230, makecol(255, 255, 255), makecol(0, 0, 0), "Score: %06d", score);
+                textprintf_ex(buffer.get(), font, 10, 230, makecol(255, 255, 255), makecol(0, 0, 0), "Lives: %2d", lives);
+                break;
+            }
+
+
+            // wait for vsync, then blit buffer to video memory
+            vsync();
+            blit(buffer.get(), screen, 0, 0, 0, 0, buffer->w, buffer->h);
+
+
+        }
+
+        set_gfx_mode(GFX_TEXT, 0, 0, 0, 0);
+        printf("Game by yoshi252 (2017)\nThank you for playing!\n");
     }
-
-    set_gfx_mode(GFX_TEXT, 0, 0, 0, 0);
-    std::cout << "Game by yoshi252 (2017)\nThank you for playing!" << std::endl;
+    catch (std::exception& ex)
+    {
+        printf("Caught exception. what(): %s\n", ex.what());
+        return 1;
+    }
+    catch (...)
+    {
+        printf("Caught unknown exception.");
+        return 1;
+    }
 
     return 0;
 }

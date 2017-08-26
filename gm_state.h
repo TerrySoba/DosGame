@@ -1,6 +1,7 @@
 #ifndef GM_STATE_H
 #define GM_STATE_H
 
+#include <vector>
 
 extern long long gameTicks;
 extern int score;
@@ -16,8 +17,7 @@ typedef struct {
     int dy;
 } Bullet;
 
-#define MAX_BULLETS 5
-extern Bullet bullets[MAX_BULLETS];
+extern std::vector<Bullet> bullets;
 
 typedef struct {
     int x;

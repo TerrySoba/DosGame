@@ -4,7 +4,8 @@ long long gameTicks;
 int score;
 int lives;
 
-Bullet bullets[MAX_BULLETS];
+
+std::vector<Bullet> bullets(5);
 
 Enemy enemy;
 

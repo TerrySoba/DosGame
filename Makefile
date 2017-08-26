@@ -1,4 +1,4 @@
-OBJ = main.o gm_state.o
+OBJ = main.o gm_state.o first_enemy.o image_utils.o
 CFLAGS = -Wall -O3 -pedantic -fdata-sections -ffunction-sections -s
 LDFLAGS = -Wl,--gc-sections -s -lalleg
 

@@ -4,6 +4,11 @@
 #include <allegro.h>
 #include <memory>
 
+namespace dos_game
+{
+
 std::shared_ptr<BITMAP> loadBitmap(const char* filename, RGB* pal = nullptr);
+
+}
 
 #endif // IMAGE_UTILS_H

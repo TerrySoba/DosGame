@@ -1,6 +1,8 @@
 #ifndef MIKMOD_SOUND_H
 #define MIKMOD_SOUND_H
 
+namespace dos_game
+{
 
 class MikmodSound
 {
@@ -14,5 +16,7 @@ private:
     void* m_module;
 
 };
+
+}
 
 #endif // MIKMOD_SOUND_H

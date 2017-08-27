@@ -14,6 +14,9 @@
 #include <cstring>
 #include <array>
 
+namespace dos_game
+{
+
 void abort_on_error(const char* message)
 {
     if (screen != NULL)
@@ -33,30 +36,24 @@ void incrementTicks()
 
 int sineTable[SINE_TABLE_SIZE];
 
-
-bool collision(const Bullet& bullet, const Enemy& enemy)
+bool collision(const Rect& smallerObject, const Rect& largerObject)
 {
-    int bulletWidth = 4;
-    int bulletHeight = 4;
+    // check if at least one of the corners of the smallerObject
+    // lies inside of the largerObject
+    std::array<Point, 4> corners;
+    corners[0].x = smallerObject.x;
+    corners[0].y = smallerObject.y;
+    corners[1].x = smallerObject.x + smallerObject.width;
+    corners[1].y = smallerObject.y;
+    corners[2].x = smallerObject.x + smallerObject.width;
+    corners[2].y = smallerObject.y + smallerObject.height;
+    corners[3].x = smallerObject.x;
+    corners[3].y = smallerObject.y + smallerObject.height;
 
-    int enemyWidth = 16;
-    int enemyHeight = 16;
-
-    // check if at least one of the corners of the bullets lies inside of the enemy
-    Point corners[4];
-    corners[0].x = bullet.x;
-    corners[0].y = bullet.y;
-    corners[1].x = bullet.x + bulletWidth;
-    corners[1].y = bullet.y;
-    corners[2].x = bullet.x + bulletWidth;
-    corners[2].y = bullet.y + bulletHeight;
-    corners[3].x = bullet.x;
-    corners[3].y = bullet.y + bulletHeight;
-
-    for (int i = 0; i < 4; ++i)
+    for (const auto& corner : corners)
     {
-        if (corners[i].x >= enemy.x && corners[i].x < enemy.x + enemyWidth &&
-            corners[i].y >= enemy.y && corners[i].y < enemy.y + enemyHeight)
+        if (corner.x >= largerObject.x && corner.x < largerObject.x + largerObject.width &&
+            corner.y >= largerObject.y && corner.y < largerObject.y + largerObject.height)
         {
             return true;
         }
@@ -76,7 +73,8 @@ void calcPhysics()
     // check for collision
     for (auto& bullet : bullets)
     {
-        if (collision(bullet, enemy))
+        if (collision(Rect{bullet.x, bullet.y, 4, 4},
+                      Rect{enemy.x, enemy.y, 16, 16}))
         {
             ++score;
             enemy.x = rand() % (SCREEN_WIDTH - 16);
@@ -138,18 +136,19 @@ void fillSineTable()
 }
 
 
-typedef enum _GameState
+enum class GameState
 {
     START_SCREEN,
     LEVEL1,
     DEATH,
-} GameState;
+};
 
 
 GameState gameState;
 
 
-int main(int argc, char* argv[])
+
+int game_main(int argc, char* argv[])
 {
     MikmodSound sound("music/test2.xm");
 
@@ -186,7 +185,7 @@ int main(int argc, char* argv[])
 
         set_color_depth(8);
 
-        if (set_gfx_mode(GFX_MODEX, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0) != 0)
+        if (set_gfx_mode(GFX_AUTODETECT, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0) != 0)
            abort_on_error("Could not set gfx mode.");
 
 
@@ -201,7 +200,7 @@ int main(int argc, char* argv[])
         {
             palette[i].r = (i >> 2) * 0;
             palette[i].g = (i >> 2);
-            palette[i].b = (i >> 2) / 2;
+            palette[i].b = (i >> 2) / 1.5;
         }
 
         set_palette(palette);
@@ -241,24 +240,24 @@ int main(int argc, char* argv[])
         shipPos.y = SCREEN_HEIGHT - 50;
 
 
-        gameState = START_SCREEN;
+        gameState = GameState::START_SCREEN;
 
         // enter event loop
         while(key[KEY_ESC]==0)
         {
             switch(gameState)
             {
-            case START_SCREEN:
+            case GameState::START_SCREEN:
                 drawStartScreen(buffer.get(), bg.get(), enemySprite.get());
 
                 if (key[KEY_SPACE])
                 {
-                    gameState = LEVEL1;
+                    gameState = GameState::LEVEL1;
                 }
 
                 break;
 
-            case LEVEL1:
+            case GameState::LEVEL1:
                 if (key[KEY_RIGHT])
                     shipPos.x += 4;
 
@@ -346,3 +345,10 @@ int main(int argc, char* argv[])
     return 0;
 }
 END_OF_MAIN()
+
+}
+
+int main(int argc, char* argv[])
+{
+    return dos_game::game_main(argc, argv);
+}

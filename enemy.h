@@ -6,6 +6,9 @@
 
 #include <vector>
 
+namespace dos_game
+{
+
 class EnemyBase
 {
 public:
@@ -15,5 +18,7 @@ public:
     virtual BITMAP* getBitmap() = 0;
     virtual Point getPos() = 0;
 };
+
+}
 
 #endif

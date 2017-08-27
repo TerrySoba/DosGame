@@ -1,5 +1,8 @@
 #include "image_utils.h"
 
+namespace dos_game
+{
+
 std::shared_ptr<BITMAP> loadBitmap(const char* filename, RGB* pal)
 {
     auto bitmap = load_bitmap(filename, pal);
@@ -12,3 +15,7 @@ std::shared_ptr<BITMAP> loadBitmap(const char* filename, RGB* pal)
     auto deleter = [](auto ptr) {destroy_bitmap(ptr);};
     return std::shared_ptr<BITMAP>(bitmap, deleter);
 }
+
+
+}
+

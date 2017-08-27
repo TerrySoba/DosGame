@@ -6,6 +6,9 @@
 
 #include <memory>
 
+namespace dos_game
+{
+
 class FirstEnemy : public EnemyBase
 {
 public:
@@ -24,5 +27,7 @@ private:
     Point m_pos;
     size_t m_actCount = 0;
 };
+
+}
 
 #endif // FIRST_ENEMY_H

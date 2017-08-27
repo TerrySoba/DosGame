@@ -1,6 +1,9 @@
 #ifndef POINT_H
 #define POINT_H
 
+namespace dos_game
+{
+
 struct Point
 {
     int x;
@@ -15,5 +18,8 @@ struct Rect
     int width;
     int height;
 };
+
+
+}
 
 #endif // POINT_H

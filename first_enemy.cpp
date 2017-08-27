@@ -2,6 +2,9 @@
 
 #include "image_utils.h"
 
+namespace dos_game
+{
+
 FirstEnemy::FirstEnemy(const char* imagePath)
 {
     m_bitmap = loadBitmap(imagePath);
@@ -30,4 +33,6 @@ BITMAP* FirstEnemy::getBitmap()
 Point FirstEnemy::getPos()
 {
     return m_pos;
+}
+
 }

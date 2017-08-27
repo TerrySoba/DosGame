@@ -3,6 +3,9 @@
 #include <mikmod.h>
 #include <unistd.h>
 
+namespace dos_game
+{
+
 MikmodSound::MikmodSound(const char* modulePath)
 {
     /* register all the drivers */
@@ -48,4 +51,6 @@ MikmodSound::~MikmodSound()
 void MikmodSound::update()
 {
     MikMod_Update();
+}
+
 }

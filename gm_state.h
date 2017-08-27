@@ -3,6 +3,9 @@
 
 #include <vector>
 
+namespace dos_game
+{
+
 extern long long gameTicks;
 extern int score;
 extern int lives;
@@ -28,5 +31,6 @@ typedef struct {
 
 extern Enemy enemy;
 
+}
 
 #endif

@@ -1,5 +1,7 @@
 #include "image_utils.h"
 
+#include "logging.h"
+
 namespace dos_game
 {
 
@@ -9,7 +11,7 @@ std::shared_ptr<BITMAP> loadBitmap(const char* filename, RGB* pal)
 
     if (!bitmap)
     {
-        throw std::runtime_error("Could not load image file.");
+        THROW_EXCEPTION("Could not load image file: " << filename);
     }
 
     auto deleter = [](auto ptr) {destroy_bitmap(ptr);};

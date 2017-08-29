@@ -44,9 +44,11 @@ void GfxObject::setActive(bool active)
 }
 
 
-Engine::Engine()
+Engine::Engine(int screenWidth, int screenHeight) :
+    m_screenWidth(screenWidth),
+    m_screenHeight(screenHeight)
 {
-    m_buffer = std::shared_ptr<BITMAP>(create_bitmap(320,240), [](auto ptr){ destroy_bitmap(ptr);});
+    m_buffer = std::shared_ptr<BITMAP>(create_bitmap(m_screenWidth, m_screenHeight), [](auto ptr){ destroy_bitmap(ptr);});
 }
 
 Engine::~Engine()

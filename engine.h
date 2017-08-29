@@ -50,7 +50,7 @@ public:
 class Engine
 {
 public:
-    Engine();
+    Engine(int screenWidth, int screenHeight);
     virtual ~Engine();
 
     std::shared_ptr<GfxObject> createGfxObject(std::shared_ptr<BITMAP> image, bool hasTransparency = false, int z = 0);
@@ -59,6 +59,8 @@ public:
     void drawScreen();
 
 private:
+    int m_screenWidth;
+    int m_screenHeight;
     std::set<std::shared_ptr<GfxObject>, ZCompare> m_gfxObjects;
     std::shared_ptr<BITMAP> m_buffer;
 };

@@ -1,5 +1,7 @@
 #include "mikmod_sound.h"
 
+#include "logging.h"
+
 #include <mikmod.h>
 #include <unistd.h>
 
@@ -17,9 +19,8 @@ MikmodSound::MikmodSound(const char* modulePath)
     /* initialize the library */
     md_mode |= DMODE_SOFT_MUSIC;
     if (MikMod_Init("")) {
-        fprintf(stderr, "Could not initialize sound, reason: %s\n",
-                MikMod_strerror(MikMod_errno));
-        return;
+        THROW_EXCEPTION("Could not initialize sound, reason: " <<
+                        MikMod_strerror(MikMod_errno));
     }
 
     /* load module */
@@ -34,8 +35,8 @@ MikmodSound::MikmodSound(const char* modulePath)
     }
     else
     {
-        fprintf(stderr, "Could not load module, reason: %s\n",
-                MikMod_strerror(MikMod_errno));
+        THROW_EXCEPTION("Could not load module, reason: " <<
+                        MikMod_strerror(MikMod_errno));
     }
 }
 

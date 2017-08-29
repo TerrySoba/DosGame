@@ -15,7 +15,7 @@ namespace dos_game
 class GfxObject
 {
 public:
-    GfxObject(const char* imagePath, const Point& pos = {0,0}, bool transparency = false, int z = 0);
+    GfxObject(std::shared_ptr<BITMAP> image, const Point& pos = {0,0}, bool transparency = false, int z = 0);
 
     virtual Rect getBoundingBox() const;
     virtual bool isActive() const;
@@ -53,7 +53,7 @@ public:
     Engine();
     virtual ~Engine();
 
-    std::shared_ptr<GfxObject> loadGfx(const char* filename, bool hasTransparency = false, int z = 0);
+    std::shared_ptr<GfxObject> createGfxObject(std::shared_ptr<BITMAP> image, bool hasTransparency = false, int z = 0);
     void unloadGfx(std::shared_ptr<GfxObject>);
 
     void drawScreen();

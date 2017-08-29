@@ -5,12 +5,12 @@
 namespace dos_game
 {
 
-GfxObject::GfxObject(const char* imagePath, const Point& pos, bool transparency, int z) :
+GfxObject::GfxObject(std::shared_ptr<BITMAP> image, const Point& pos, bool transparency, int z) :
+    m_bitmap(image),
     m_pos(pos),
     m_hasTransparency(transparency),
     m_z(z)
 {
-    m_bitmap = loadBitmap(imagePath);
 }
 
 int GfxObject::getZ() const
@@ -55,9 +55,9 @@ Engine::~Engine()
 }
 
 
-std::shared_ptr<GfxObject> Engine::loadGfx(const char* filename, bool hasTransparency, int z)
+std::shared_ptr<GfxObject> Engine::createGfxObject(std::shared_ptr<BITMAP> image, bool hasTransparency, int z)
 {
-    auto ptr = std::shared_ptr<GfxObject>(new GfxObject(filename, {0,0}, hasTransparency, z));
+    auto ptr = std::shared_ptr<GfxObject>(new GfxObject(image, {0,0}, hasTransparency, z));
 
     m_gfxObjects.insert(ptr);
 

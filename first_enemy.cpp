@@ -5,15 +5,16 @@
 namespace dos_game
 {
 
-FirstEnemy::FirstEnemy(const char* imagePath)
+FirstEnemy::FirstEnemy(std::shared_ptr<GfxObject> image)
 {
-    m_bitmap = loadBitmap(imagePath);
+    m_image = image;
     m_pos = {100, 20};
 }
 
 Rect FirstEnemy::getBoundingBox()
 {
-    return {m_pos.x, m_pos.y, m_bitmap->w, m_bitmap->h};
+
+    return m_image->getBoundingBox();
 }
 
 void FirstEnemy::act(const Rect& playerPos, const std::vector<Bullet>& bullets)
@@ -25,9 +26,9 @@ void FirstEnemy::act(const Rect& playerPos, const std::vector<Bullet>& bullets)
     }
 }
 
-BITMAP* FirstEnemy::getBitmap()
+std::shared_ptr<GfxObject> FirstEnemy::getGfxObject()
 {
-    return m_bitmap.get();
+    return m_image;
 }
 
 Point FirstEnemy::getPos()

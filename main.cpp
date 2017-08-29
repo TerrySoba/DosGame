@@ -4,6 +4,7 @@
 #include "image_utils.h"
 #include "first_enemy.h"
 #include "mikmod_sound.h"
+#include "engine.h"
 
 #include <allegro.h>
 #include <cstdlib>
@@ -205,12 +206,20 @@ int game_main(int argc, char* argv[])
 
         set_palette(palette);
 
+        Engine engine;
+
         auto ship = loadBitmap("gfx/ship.pcx");
         auto enemySprite = loadBitmap("gfx/enemy.pcx");
         auto bulletImage = loadBitmap("gfx/bullet.pcx");
         auto bg = loadBitmap("gfx/space_bg.pcx");
 
-        std::shared_ptr<BITMAP> buffer(create_bitmap(320,240), [](auto ptr){ destroy_bitmap(ptr);});
+
+        auto shipObj = engine.createGfxObject(ship, true);
+        auto enemyObj = engine.createGfxObject(enemySprite, true);
+        auto bulletObj = engine.createGfxObject(bulletImage, true);
+        auto bgObj = engine.createGfxObject(bg, false, -1);
+
+        // std::shared_ptr<BITMAP> buffer(create_bitmap(320,240), [](auto ptr){ destroy_bitmap(ptr);});
 
         clearBullets();
 
@@ -232,7 +241,7 @@ int game_main(int argc, char* argv[])
         std::vector<std::shared_ptr<EnemyBase>> enemies;
 
 
-        enemies.push_back(std::make_shared<FirstEnemy>("gfx/enemy.pcx"));
+        enemies.push_back(std::make_shared<FirstEnemy>(enemyObj));
 
 
         // play_midi(music, 1);
@@ -248,7 +257,7 @@ int game_main(int argc, char* argv[])
             switch(gameState)
             {
             case GameState::START_SCREEN:
-                drawStartScreen(buffer.get(), bg.get(), enemySprite.get());
+                // drawStartScreen(buffer.get(), bg.get(), enemySprite.get());
 
                 if (key[KEY_SPACE])
                 {
@@ -284,45 +293,49 @@ int game_main(int argc, char* argv[])
                     ++physicsCount;
                 }
 
-                for (auto enemy : enemies)
-                {
-                    enemy->act(Rect{shipPos.x,shipPos.y, ship->w, ship->h}, bullets);
-                }
+//                for (auto enemy : enemies)
+//                {
+//                    enemy->act(Rect{shipPos.x,shipPos.y, ship->w, ship->h}, bullets);
+//                }
 
-                // draw bg image to buffer
-                blit(bg.get(), buffer.get(), 0, 0, 0, 0, bg->w, bg->h);
+//                // draw bg image to buffer
+//                blit(bg.get(), buffer.get(), 0, 0, 0, 0, bg->w, bg->h);
 
-                // draw bullets
-                for (const auto& bullet : bullets)
-                {
-                    draw_sprite(buffer.get(), bulletImage.get(), bullet.x, bullet.y);
-                }
-
-
-                // draw enemies
-                for (auto enemy : enemies)
-                {
-                    const auto& pos = enemy->getPos();
-                    draw_sprite(buffer.get(), enemy->getBitmap(), pos.x, pos.y);
-                }
+//                // draw bullets
+//                for (const auto& bullet : bullets)
+//                {
+//                    draw_sprite(buffer.get(), bulletImage.get(), bullet.x, bullet.y);
+//                }
 
 
-                // draw enemy
-                draw_sprite(buffer.get(), enemySprite.get(), enemy.x, enemy.y);
+//                // draw enemies
+//                for (auto enemy : enemies)
+//                {
+//                    const auto& pos = enemy->getPos();
+//                    draw_sprite(buffer.get(), enemy->getBitmap(), pos.x, pos.y);
+//                }
 
-                // draw the player ship
-                draw_sprite(buffer.get(), ship.get(), shipPos.x, shipPos.y);
+
+//                // draw enemy
+//                draw_sprite(buffer.get(), enemySprite.get(), enemy.x, enemy.y);
+
+//                // draw the player ship
+//                draw_sprite(buffer.get(), ship.get(), shipPos.x, shipPos.y);
 
                 // draw score text
-                textprintf_ex(buffer.get(), font, 200, 230, makecol(255, 255, 255), makecol(0, 0, 0), "Score: %06d", score);
-                textprintf_ex(buffer.get(), font, 10, 230, makecol(255, 255, 255), makecol(0, 0, 0), "Lives: %2d", lives);
+
+                // textprintf_ex(buffer.get(), font, 200, 230, makecol(255, 255, 255), makecol(0, 0, 0), "Score: %06d", score);
+                // textprintf_ex(buffer.get(), font, 10, 230, makecol(255, 255, 255), makecol(0, 0, 0), "Lives: %2d", lives);
                 break;
             }
 
 
             // wait for vsync, then blit buffer to video memory
-            vsync();
-            blit(buffer.get(), screen, 0, 0, 0, 0, buffer->w, buffer->h);
+
+            engine.drawScreen();
+
+            // vsync();
+            // blit(buffer.get(), screen, 0, 0, 0, 0, buffer->w, buffer->h);
 
             sound.update();
 

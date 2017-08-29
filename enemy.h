@@ -3,6 +3,7 @@
 
 #include "point.h"
 #include "gm_state.h"
+#include "engine.h"
 
 #include <vector>
 
@@ -15,7 +16,7 @@ public:
     virtual ~EnemyBase() {}
     virtual Rect getBoundingBox() = 0;
     virtual void act(const Rect& playerPos, const std::vector<Bullet>& bullets) = 0;
-    virtual BITMAP* getBitmap() = 0;
+    virtual std::shared_ptr<GfxObject> getGfxObject() = 0;
     virtual Point getPos() = 0;
 };
 

@@ -4,6 +4,7 @@
 #include "sprite.h"
 #include "enemy.h"
 
+
 #include <memory>
 
 namespace dos_game
@@ -12,18 +13,16 @@ namespace dos_game
 class FirstEnemy : public EnemyBase
 {
 public:
-    FirstEnemy(const char* imagePath);
+    FirstEnemy(std::shared_ptr<GfxObject> image);
 
     // EnemyBase interface
     virtual Rect getBoundingBox() override;
     virtual void act(const Rect& playerPos, const std::vector<Bullet>& bullets) override;
-
-    // Sprite interface
-    virtual BITMAP* getBitmap() override;
+    virtual std::shared_ptr<GfxObject> getGfxObject() override;
     virtual Point getPos() override;
 
 private:
-    std::shared_ptr<BITMAP> m_bitmap;
+    std::shared_ptr<GfxObject> m_image;
     Point m_pos;
     size_t m_actCount = 0;
 };

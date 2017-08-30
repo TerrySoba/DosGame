@@ -1,6 +1,9 @@
 #include "image_utils.h"
 #include "mikmod_sound.h"
 #include "engine.h"
+#include "level_holder.h"
+#include "title_screen.h"
+
 
 #include "logging.h"
 
@@ -57,28 +60,33 @@ int game_main(int argc, char* argv[])
 
         setPaletteToGreen();
 
-        Engine engine(SCREEN_WIDTH, SCREEN_HEIGHT);
+        auto engine = std::make_shared<Engine>(SCREEN_WIDTH, SCREEN_HEIGHT);
 
-        auto ship = loadBitmap("gfx/ship.pcx");
-        auto enemySprite = loadBitmap("gfx/enemy.pcx");
-        auto bulletImage = loadBitmap("gfx/bullet.pcx");
-        auto bg = loadBitmap("gfx/space_bg.pcx");
+//        auto ship = loadBitmap("gfx/ship.pcx");
+//        auto enemySprite = loadBitmap("gfx/enemy.pcx");
+//        auto bulletImage = loadBitmap("gfx/bullet.pcx");
+//        auto bg = loadBitmap("gfx/space_bg.pcx");
 
-        auto shipObj = engine.createGfxObject(ship, true);
-        auto enemyObj = engine.createGfxObject(enemySprite, true);
-        auto bulletObj = engine.createGfxObject(bulletImage, true);
-        auto bgObj = engine.createGfxObject(bg, false, -1);
+//        auto shipObj = engine->createGfxObject(ship, true);
+//        auto enemyObj = engine->createGfxObject(enemySprite, true);
+//        auto bulletObj = engine->createGfxObject(bulletImage, true);
+//        auto bgObj = engine->createGfxObject(bg, false, -1);
 
-        auto text = engine.createTextObject("GAME!!!!");
+        auto text = engine->createTextObject("GAME!!!!");
 
         text->pos = {10, 30};
+
+        LevelHolder levels(engine, std::make_shared<TitleScreen>());
 
         // enter event loop
         while(key[KEY_ESC]==0)
         {
-            shipObj->setPos({100,100});
-            bulletObj->setPos({20,20});
-            engine.drawScreen();
+            // shipObj->setPos({100,100});
+            // bulletObj->setPos({20,20});
+
+            levels.act();
+
+            engine->drawScreen();
             sound.update();
         }
 

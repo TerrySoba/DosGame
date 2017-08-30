@@ -1,4 +1,4 @@
-OBJ = main.o image_utils.o mikmod_sound.o engine.o logging.o
+OBJ = main.o image_utils.o mikmod_sound.o engine.o logging.o level_holder.o title_screen.o
 
 CFLAGS = -Wall -O2  -I./3rd_party/mikmod/include -I./3rd_party/allegro/include
 LDFLAGS = -L./3rd_party/allegro/lib -lalleg -L./3rd_party/mikmod/lib -lmikmod

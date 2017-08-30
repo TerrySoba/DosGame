@@ -31,11 +31,11 @@ public:
     }
 
 private:
+    std::shared_ptr<BITMAP> m_bitmap;
     Point m_pos;
     bool m_isActive = true;
     const bool m_hasTransparency;
     const int m_z;
-    std::shared_ptr<BITMAP> m_bitmap;
 };
 
 struct TextObject

@@ -69,6 +69,10 @@ int game_main(int argc, char* argv[])
         auto bulletObj = engine.createGfxObject(bulletImage, true);
         auto bgObj = engine.createGfxObject(bg, false, -1);
 
+        auto text = engine.createTextObject("GAME!!!!");
+
+        text->pos = {10, 30};
+
         // enter event loop
         while(key[KEY_ESC]==0)
         {

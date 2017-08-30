@@ -66,6 +66,23 @@ std::shared_ptr<GfxObject> Engine::createGfxObject(std::shared_ptr<BITMAP> image
     return ptr;
 }
 
+std::shared_ptr<TextObject> Engine::createTextObject(const std::string& text)
+{
+    auto txt = std::make_shared<TextObject>();
+    txt->text = text;
+    txt->pos = {0,0};
+    m_textObjects.insert(txt);
+
+    return txt;
+}
+
+
+void Engine::unloadText(std::shared_ptr<TextObject> text)
+{
+    auto it = m_textObjects.find(text);
+    if (it != m_textObjects.end()) m_textObjects.erase(it);
+}
+
 void Engine::unloadGfx(std::shared_ptr<GfxObject> gfxObject)
 {
     auto it = m_gfxObjects.find(gfxObject);
@@ -85,6 +102,13 @@ void Engine::drawScreen()
         {
             blit(obj->getBitmap().get(), m_buffer.get(), 0, 0, bb.x, bb.y, bb.width, bb.height);
         }
+    }
+
+    for (const auto& obj : m_textObjects)
+    {
+        auto& pos = obj->pos;
+        textout_ex(m_buffer.get(), font, obj->text.c_str(), pos.x, pos.y,
+                         makecol(255, 255, 255), -1);
     }
 
     vsync();

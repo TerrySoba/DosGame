@@ -89,7 +89,6 @@ void Engine::drawScreen()
 
     vsync();
     blit(m_buffer.get(), screen, 0, 0, 0, 0, m_buffer->w, m_buffer->h);
-
 }
 
 

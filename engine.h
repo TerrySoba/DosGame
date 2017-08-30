@@ -61,7 +61,7 @@ public:
 private:
     int m_screenWidth;
     int m_screenHeight;
-    std::set<std::shared_ptr<GfxObject>, ZCompare> m_gfxObjects;
+    std::multiset<std::shared_ptr<GfxObject>, ZCompare> m_gfxObjects;
     std::shared_ptr<BITMAP> m_buffer;
 };
 

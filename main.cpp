@@ -73,6 +73,7 @@ int game_main(int argc, char* argv[])
         while(key[KEY_ESC]==0)
         {
             shipObj->setPos({100,100});
+            bulletObj->setPos({20,20});
             engine.drawScreen();
             sound.update();
         }

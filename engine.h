@@ -12,30 +12,23 @@
 namespace dos_game
 {
 
-class GfxObject
+struct GfxObject
 {
-public:
-    GfxObject(std::shared_ptr<BITMAP> image, const Point& pos = {0,0}, bool transparency = false, int z = 0);
+    std::shared_ptr<BITMAP> bitmap;
+    Point pos = {0,0};
+    bool isActive = true;
+    bool hasTransparency = false;
+    int z = 0;
 
-    virtual Rect getBoundingBox() const;
-    virtual bool isActive() const;
-    virtual bool hasTransparency() const;
-
-    virtual void setPos(const Point& pos);
-    virtual void setActive(bool active);
-    virtual int getZ() const;
-
-    virtual std::shared_ptr<BITMAP> getBitmap() const
+    int width()
     {
-        return m_bitmap;
+        return bitmap->w;
     }
 
-private:
-    std::shared_ptr<BITMAP> m_bitmap;
-    Point m_pos;
-    bool m_isActive = true;
-    const bool m_hasTransparency;
-    const int m_z;
+    int height()
+    {
+        return bitmap->h;
+    }
 };
 
 struct TextObject
@@ -49,7 +42,7 @@ class ZCompare
 public:
     bool operator()(std::shared_ptr<GfxObject> lhs, std::shared_ptr<GfxObject> rhs) const
     {
-        return lhs->getZ() < rhs->getZ();
+        return lhs->z < rhs->z;
     }
 };
 

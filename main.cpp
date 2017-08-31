@@ -62,16 +62,6 @@ int game_main(int argc, char* argv[])
 
         auto engine = std::make_shared<Engine>(SCREEN_WIDTH, SCREEN_HEIGHT);
 
-//        auto ship = loadBitmap("gfx/ship.pcx");
-//        auto enemySprite = loadBitmap("gfx/enemy.pcx");
-//        auto bulletImage = loadBitmap("gfx/bullet.pcx");
-//        auto bg = loadBitmap("gfx/space_bg.pcx");
-
-//        auto shipObj = engine->createGfxObject(ship, true);
-//        auto enemyObj = engine->createGfxObject(enemySprite, true);
-//        auto bulletObj = engine->createGfxObject(bulletImage, true);
-//        auto bgObj = engine->createGfxObject(bg, false, -1);
-
         auto text = engine->createTextObject("GAME!!!!");
 
         text->pos = {10, 30};

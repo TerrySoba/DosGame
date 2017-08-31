@@ -5,45 +5,6 @@
 namespace dos_game
 {
 
-GfxObject::GfxObject(std::shared_ptr<BITMAP> image, const Point& pos, bool transparency, int z) :
-    m_bitmap(image),
-    m_pos(pos),
-    m_hasTransparency(transparency),
-    m_z(z)
-{
-}
-
-int GfxObject::getZ() const
-{
-    return m_z;
-}
-
-Rect GfxObject::getBoundingBox() const
-{
-    return {m_pos.x, m_pos.y, m_bitmap->w, m_bitmap->w};
-}
-
-bool GfxObject::isActive() const
-{
-    return m_isActive;
-}
-
-bool GfxObject::hasTransparency() const
-{
-    return m_hasTransparency;
-}
-
-void GfxObject::setPos(const Point& pos)
-{
-    m_pos = pos;
-}
-
-void GfxObject::setActive(bool active)
-{
-    m_isActive = active;
-}
-
-
 Engine::Engine(int screenWidth, int screenHeight) :
     m_screenWidth(screenWidth),
     m_screenHeight(screenHeight)
@@ -59,7 +20,11 @@ Engine::~Engine()
 
 std::shared_ptr<GfxObject> Engine::createGfxObject(std::shared_ptr<BITMAP> image, bool hasTransparency, int z)
 {
-    auto ptr = std::shared_ptr<GfxObject>(new GfxObject(image, {0,0}, hasTransparency, z));
+    auto ptr = std::make_shared<GfxObject>();
+
+    ptr->bitmap = image;
+    ptr->hasTransparency = hasTransparency;
+    ptr->z = z;
 
     m_gfxObjects.insert(ptr);
 
@@ -93,14 +58,14 @@ void Engine::drawScreen()
 {
     for (const auto& obj : m_gfxObjects)
     {
-        const auto bb = obj->getBoundingBox();
-        if (obj->hasTransparency())
+        const auto& pos = obj->pos;
+        if (obj->hasTransparency)
         {
-            draw_sprite(m_buffer.get(), obj->getBitmap().get(), bb.x, bb.y);
+            draw_sprite(m_buffer.get(), obj->bitmap.get(), pos.x, pos.y);
         }
         else
         {
-            blit(obj->getBitmap().get(), m_buffer.get(), 0, 0, bb.x, bb.y, bb.width, bb.height);
+            blit(obj->bitmap.get(), m_buffer.get(), 0, 0, pos.x, pos.y, obj->width(), obj->height());
         }
     }
 

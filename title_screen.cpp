@@ -4,6 +4,8 @@
 
 #include "enemy_level.h"
 
+#include "logging.h"
+
 namespace dos_game
 {
 
@@ -33,8 +35,8 @@ void TitleScreen::onExit(std::shared_ptr<LevelContext> context)
 // This is called at least once per drawn frame.
 void TitleScreen::act(std::shared_ptr<LevelContext> context)
 {
-    auto bb = m_enemy->getBoundingBox();
-    m_enemy->setPos({(bb.x + 1) % 320, (bb.y + 1) % 240});
+    const auto& pos = m_enemy->pos;
+    m_enemy->pos = {(pos.x + 1) % 320, (pos.y + 1) % 240};
 
 
     if (key[KEY_SPACE] != 0)

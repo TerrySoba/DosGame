@@ -22,13 +22,13 @@ void EnemyLevel::onLoad(std::shared_ptr<LevelContext> context)
     auto shipImage = loadBitmap("gfx/ship.pcx");
     m_ship = context->getEngine()->createGfxObject(shipImage, true);
 
-    m_ship->setPos({100, 200});
+    m_ship->pos = {100, 200};
 
     auto bulletImage = loadBitmap("gfx/bullet.pcx");
     for (size_t i = 0; i < 5; ++i)
     {
         m_bullets.push_back(context->getEngine()->createGfxObject(bulletImage, true));
-        m_bullets.back()->setPos({-100, -100});
+        m_bullets.back()->pos = {-100, -100};
     }
 }
 
@@ -43,8 +43,7 @@ std::shared_ptr<GfxObject> EnemyLevel::getIdleBullet()
 {
     for (auto& bullet : m_bullets)
     {
-        auto bb = bullet->getBoundingBox();
-        if (bb.y <= -4)
+        if (bullet->pos.y <= -4)
         {
             return bullet;
         }
@@ -55,14 +54,14 @@ std::shared_ptr<GfxObject> EnemyLevel::getIdleBullet()
 
 void EnemyLevel::act(std::shared_ptr<LevelContext> context)
 {
-    auto bb = m_ship->getBoundingBox();
+    auto& shipPos = m_ship->pos;
     if (key[KEY_LEFT] != 0)
     {
-        m_ship->setPos({bb.x - 2, bb.y});
+        m_ship->pos = {shipPos.x - 2, shipPos.y};
     }
     else if (key[KEY_RIGHT] != 0)
     {
-        m_ship->setPos({bb.x + 2, bb.y});
+        m_ship->pos = {shipPos.x + 2, shipPos.y};
     }
 
     if (key[KEY_SPACE] != 0)
@@ -70,16 +69,16 @@ void EnemyLevel::act(std::shared_ptr<LevelContext> context)
         auto bullet = getIdleBullet();
         if (bullet)
         {
-            auto bb = m_ship->getBoundingBox();
-            bullet->setPos({bb.x, bb.y});
+            auto& pos = m_ship->pos;
+            bullet->pos = pos;
         }
     }
 
 
     for (auto& bullet : m_bullets)
     {
-        auto bb = bullet->getBoundingBox();
-        bullet->setPos({bb.x, bb.y - 5});
+        auto& pos = bullet->pos;
+        bullet->pos = {pos.x, pos.y - 5};
     }
 
 }

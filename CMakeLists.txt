@@ -4,7 +4,7 @@ set(CMAKE_TOOLCHAIN_FILE Toolchain-djgpp.cmake)
 
 project (DosGame)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -s")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -march=i386 -s")
 
 include_directories(
     3rd_party/mikmod/include
@@ -19,6 +19,7 @@ add_executable(${PROJECT_NAME}.exe
     logging.cpp
     level_holder.cpp
     title_screen.cpp
+    enemy_level.cpp
     )
 
 

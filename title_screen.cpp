@@ -2,6 +2,8 @@
 
 #include "image_utils.h"
 
+#include "enemy_level.h"
+
 namespace dos_game
 {
 
@@ -35,9 +37,9 @@ void TitleScreen::act(std::shared_ptr<LevelContext> context)
     m_enemy->setPos({(bb.x + 1) % 320, (bb.y + 1) % 240});
 
 
-    if (frameCount++ > 100)
+    if (key[KEY_SPACE] != 0)
     {
-        context->setActiveLevel(std::make_shared<TitleScreen>());
+        context->setActiveLevel(std::make_shared<EnemyLevel>());
     }
 }
 

@@ -35,7 +35,15 @@ void EnemyLevel::onLoad(std::shared_ptr<LevelContext> context)
 
 void EnemyLevel::onExit(std::shared_ptr<LevelContext> context)
 {
+    auto& engine = *context->getEngine();
 
+    engine.unloadGfx(m_bg);
+    engine.unloadGfx(m_enemy);
+    engine.unloadGfx(m_ship);
+    for (auto bullet : m_bullets)
+    {
+        engine.unloadGfx(bullet);
+    }
 }
 
 

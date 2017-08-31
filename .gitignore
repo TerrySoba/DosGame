@@ -6,3 +6,9 @@ ERRORS
 DosGame.*
 *.ninja
 Makefile
+CWSDPMI.SWP
+*.user
+CMakeFiles
+cmake_install.cmake
+.ninja*
+CMakeCache.txt

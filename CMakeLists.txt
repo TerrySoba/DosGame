@@ -34,3 +34,8 @@ add_custom_command(
     COMMAND upx --lzma ${PROJECT_NAME}.exe -o ${PROJECT_NAME}C.exe
     )
 
+add_custom_target(
+    run
+    COMMAND dosbox -conf run_in_dosbox.conf
+    DEPENDS ${PROJECT_NAME}.exe
+    )

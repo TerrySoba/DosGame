@@ -46,7 +46,9 @@ int game_main(int argc, char* argv[])
 {
     try
     {
-        MikmodSound sound("music/test2.xm");
+//        MikmodSound sound;
+//        sound.play("music/test2.xm", true);
+//        sound.play("music/victory.xm", false);
 
         printf("Starting game!\n");
 
@@ -61,6 +63,8 @@ int game_main(int argc, char* argv[])
         setPaletteToGreen();
 
         auto engine = std::make_shared<Engine>(SCREEN_WIDTH, SCREEN_HEIGHT);
+
+        engine->playMusic("music/test2.xm", true);
 
         // auto text = engine->createTextObject("GAME!!!!");
 
@@ -77,7 +81,7 @@ int game_main(int argc, char* argv[])
             levels.act();
 
             engine->drawScreen();
-            sound.update();
+            // sound.update();
         }
 
         set_gfx_mode(GFX_TEXT, 0, 0, 0, 0);

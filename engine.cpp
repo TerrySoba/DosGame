@@ -80,5 +80,10 @@ void Engine::drawScreen()
     blit(m_buffer.get(), screen, 0, 0, 0, 0, m_buffer->w, m_buffer->h);
 }
 
+void Engine::playMusic(const char *filepath, bool loop)
+{
+    m_sound.play(filepath, loop);
+}
+
 
 }

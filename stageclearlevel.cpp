@@ -22,6 +22,9 @@ void StageClearLevel::onLoad(std::shared_ptr<LevelContext> context)
 
     m_clear1->pos = {70, 100};
     m_clear2->pos = {30, 90};
+
+    context->getEngine()->playMusic("music/victory.xm", false);
+
 }
 
 void StageClearLevel::onExit(std::shared_ptr<LevelContext> context)

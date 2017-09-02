@@ -7,13 +7,15 @@ namespace dos_game
 class MikmodSound
 {
 public:
-    MikmodSound(const char* modulePath);
+    MikmodSound();
     virtual ~MikmodSound();
+
+    void play(const char* modulePath, bool loop);
 
     void update();
 
 private:
-    void* m_module;
+    void* m_module = nullptr;
 
 };
 

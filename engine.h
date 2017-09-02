@@ -2,6 +2,7 @@
 #define ENGINE_H
 
 #include "point.h"
+#include "mikmod_sound.h"
 
 #include "allegro.h"
 
@@ -76,12 +77,15 @@ public:
         return m_screenHeight;
     }
 
+    void playMusic(const char* filepath, bool loop);
+
 private:
     int m_screenWidth;
     int m_screenHeight;
     std::multiset<std::shared_ptr<GfxObject>, ZCompare> m_gfxObjects;
     std::multiset<std::shared_ptr<TextObject>> m_textObjects;
     std::shared_ptr<BITMAP> m_buffer;
+    MikmodSound m_sound;
 };
 
 }

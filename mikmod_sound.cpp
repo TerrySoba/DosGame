@@ -8,7 +8,7 @@
 namespace dos_game
 {
 
-MikmodSound::MikmodSound(const char* modulePath)
+MikmodSound::MikmodSound()
 {
     /* register all the drivers */
     MikMod_RegisterAllDrivers();
@@ -23,12 +23,35 @@ MikmodSound::MikmodSound(const char* modulePath)
                         MikMod_strerror(MikMod_errno));
     }
 
+
+}
+
+MikmodSound::~MikmodSound()
+{
+    if(m_module)
+    {
+        Player_Stop();
+        Player_Free((MODULE*)m_module);
+    }
+
+    /* give up */
+    MikMod_Exit();
+}
+
+void MikmodSound::play(const char *modulePath, bool loop)
+{
+    if (m_module)
+    {
+        Player_Free((MODULE*)m_module);
+    }
+
     /* load module */
     m_module = (void*)Player_Load(modulePath, 64, 0);
 
     if (m_module) {
-        ((MODULE*)m_module)->loop = 1;
-        ((MODULE*)m_module)->wrap = 1;
+        Player_Stop();
+        ((MODULE*)m_module)->loop = loop;
+        ((MODULE*)m_module)->wrap = loop;
 
         /* start module */
         Player_Start((MODULE*)m_module);
@@ -38,15 +61,6 @@ MikmodSound::MikmodSound(const char* modulePath)
         THROW_EXCEPTION("Could not load module, reason: " <<
                         MikMod_strerror(MikMod_errno));
     }
-}
-
-MikmodSound::~MikmodSound()
-{
-    Player_Stop();
-    Player_Free((MODULE*)m_module);
-
-    /* give up */
-    MikMod_Exit();
 }
 
 void MikmodSound::update()

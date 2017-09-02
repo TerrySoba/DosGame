@@ -33,8 +33,7 @@ struct GfxObject
     Rect getBoundingBox()
     {
         return {pos.x, pos.y, bitmap->w, bitmap->h};
-    }
-
+    }    
 };
 
 struct TextObject

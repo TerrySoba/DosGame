@@ -5,6 +5,8 @@
 
 #include <vector>
 
+#include "enemy.h"
+
 namespace dos_game
 {
 
@@ -33,6 +35,7 @@ private:
     std::shared_ptr<GfxObject> m_ship;
     std::vector<std::shared_ptr<GfxObject>> m_bullets;
 
+    std::shared_ptr<Enemy> m_enemyActor;
 };
 
 }

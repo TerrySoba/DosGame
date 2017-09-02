@@ -1,12 +1,13 @@
 #include "enemy_level.h"
-
 #include "image_utils.h"
+#include "first_enemy.h"
 
 namespace dos_game
 {
 
 
-EnemyLevel::EnemyLevel()
+EnemyLevel::EnemyLevel() :
+    m_enemyActor(new FirstEnemy(16, 16))
 {
 
 }
@@ -96,15 +97,28 @@ void EnemyLevel::act(std::shared_ptr<LevelContext> context)
         bullet->pos = {pos.x, pos.y - 5};
     }
 
+    std::vector<Rect> bulletBounds;
+
     // check for bullet collisions
     for (auto& bullet : m_bullets)
     {
         if (collision(bullet->getBoundingBox(), m_enemy->getBoundingBox()))
         {
             bullet->pos = {-100, -100};
-            m_enemy->pos = {100,100};
+            // m_enemy->pos = {100,100};
+            m_enemyActor->hurt(1);
         }
+
+        bulletBounds.push_back(bullet->getBoundingBox());
     }
+
+    if (m_enemyActor->isDead())
+    {
+        m_enemyActor = std::make_shared<FirstEnemy>(16, 16);
+    }
+
+    m_enemyActor->act(m_ship->getBoundingBox(), bulletBounds);
+    m_enemy->pos = m_enemyActor->getPos();
 }
 
 

@@ -20,6 +20,7 @@ add_executable(${PROJECT_NAME}.exe
     level_holder.cpp
     title_screen.cpp
     enemy_level.cpp
+    first_enemy.cpp
     )
 
 

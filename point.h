@@ -2,6 +2,7 @@
 #define POINT_H
 
 #include <array>
+#include <type_traits>
 
 namespace dos_game
 {
@@ -12,6 +13,28 @@ struct Point
     int y;
 };
 
+namespace
+{
+
+Point operator+(const Point& a, const Point& b)
+{
+    return {a.x + b.x, a.y + b.y};
+}
+
+Point operator-(const Point& a, const Point& b)
+{
+    return {a.x - b.x, a.y - b.y};
+}
+
+template <typename T>
+Point operator*(const Point& a, const T& b)
+{
+    static_assert(std::is_integral<T>::value, "Must be integral type.");
+    return {a.x * b, a.y * b};
+}
+
+
+}
 
 struct Rect
 {

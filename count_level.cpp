@@ -1,5 +1,5 @@
-#include "enemy_level.h"
 #include "count_level.h"
+#include "enemy_level.h"
 #include "image_utils.h"
 #include "first_enemy.h"
 
@@ -9,19 +9,23 @@ namespace dos_game
 {
 
 
-EnemyLevel::EnemyLevel() :
-    m_enemyActor(new FirstEnemy(16, 16))
+CountLevel::CountLevel() :
+    m_enemyOne(new FirstEnemy(16, 16)),
+    m_enemyTwo(new FirstEnemy(16, 16, {100, 100}))
 {
 
 }
 
-void EnemyLevel::onLoad(std::shared_ptr<LevelContext> context)
+void CountLevel::onLoad(std::shared_ptr<LevelContext> context)
 {
     auto bgImage = loadBitmap("gfx/space_bg.pcx");
     m_bg = context->getEngine()->createGfxObject(bgImage, false, -1);
 
-    auto enemyImage = loadBitmap("gfx/enemy.pcx");
-    m_enemy = context->getEngine()->createGfxObject(enemyImage, true);
+    auto oneImage = loadBitmap("gfx/one.pcx");
+    m_one = context->getEngine()->createGfxObject(oneImage, true);
+
+    auto twoImage = loadBitmap("gfx/two.pcx");
+    m_two = context->getEngine()->createGfxObject(twoImage, true);
 
     auto shipImage = loadBitmap("gfx/ship.pcx");
     m_ship = context->getEngine()->createGfxObject(shipImage, true);
@@ -36,7 +40,7 @@ void EnemyLevel::onLoad(std::shared_ptr<LevelContext> context)
     }
 
 
-    m_levelName = context->getEngine()->createTextObject("Know how to shoot?");
+    m_levelName = context->getEngine()->createTextObject("Also know how to count?");
     m_levelName->pos = {10, 230};
 
     context->getEngine()->playMusic("music/test.xm", true);
@@ -45,12 +49,13 @@ void EnemyLevel::onLoad(std::shared_ptr<LevelContext> context)
 }
 
 
-void EnemyLevel::onExit(std::shared_ptr<LevelContext> context)
+void CountLevel::onExit(std::shared_ptr<LevelContext> context)
 {
     auto& engine = *context->getEngine();
 
     engine.unloadGfx(m_bg);
-    engine.unloadGfx(m_enemy);
+    engine.unloadGfx(m_one);
+    engine.unloadGfx(m_two);
     engine.unloadGfx(m_ship);
     for (auto bullet : m_bullets)
     {
@@ -62,7 +67,7 @@ void EnemyLevel::onExit(std::shared_ptr<LevelContext> context)
 }
 
 
-std::shared_ptr<GfxObject> EnemyLevel::getIdleBullet()
+std::shared_ptr<GfxObject> CountLevel::getIdleBullet()
 {
     for (auto& bullet : m_bullets)
     {
@@ -75,7 +80,7 @@ std::shared_ptr<GfxObject> EnemyLevel::getIdleBullet()
     return std::shared_ptr<GfxObject>();
 }
 
-void EnemyLevel::act(std::shared_ptr<LevelContext> context)
+void CountLevel::act(std::shared_ptr<LevelContext> context)
 {
     // move player ship on keypresses
     auto& shipPos = m_ship->pos;
@@ -86,7 +91,7 @@ void EnemyLevel::act(std::shared_ptr<LevelContext> context)
     else if (key[KEY_RIGHT] != 0)
     {
         m_ship->pos = {shipPos.x + 2, shipPos.y};
-    }    
+    }
 
     // limit horizontal movement of player ship
     auto& engine = *context->getEngine();
@@ -116,24 +121,36 @@ void EnemyLevel::act(std::shared_ptr<LevelContext> context)
     // check for bullet collisions
     for (auto& bullet : m_bullets)
     {
-        if (collision(bullet->getBoundingBox(), m_enemy->getBoundingBox()))
+        if (collision(bullet->getBoundingBox(), m_enemyOne->getBoundingBox()))
         {
             bullet->pos = {-100, -100};
             // m_enemy->pos = {100,100};
-            m_enemyActor->hurt(1);
+            m_enemyOne->hurt(1);
+        }
+
+        if (collision(bullet->getBoundingBox(), m_enemyTwo->getBoundingBox()))
+        {
+            bullet->pos = {-100, -100};
+            // m_enemy->pos = {100,100};
+            if (m_enemyOne->isDead())
+            {
+                m_enemyTwo->hurt(1);
+            }
         }
 
         bulletBounds.push_back(bullet->getBoundingBox());
     }
 
-    if (m_enemyActor->isDead())
+    if (m_enemyTwo->isDead())
     {
         // go to next level
-        context->setActiveLevel(std::make_shared<StageClearLevel>(std::make_shared<CountLevel>()));
+        context->setActiveLevel(std::make_shared<StageClearLevel>(std::make_shared<EnemyLevel>()));
     }
 
-    m_enemyActor->act(m_ship->getBoundingBox(), bulletBounds);
-    m_enemy->pos = m_enemyActor->getPos();
+    m_enemyOne->act(m_ship->getBoundingBox(), bulletBounds);
+    m_enemyTwo->act(m_ship->getBoundingBox(), bulletBounds);
+    m_one->pos = m_enemyOne->getPos();
+    m_two->pos = m_enemyTwo->getPos();
 }
 
 

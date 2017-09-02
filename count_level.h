@@ -1,5 +1,5 @@
-#ifndef ENEMY_LEVEL_H
-#define ENEMY_LEVEL_H
+#ifndef COUNT_LEVEL_H
+#define COUNT_LEVEL_H
 
 #include "level_holder.h"
 
@@ -10,10 +10,10 @@
 namespace dos_game
 {
 
-class EnemyLevel : public Level
+class CountLevel : public Level
 {
 public:
-    EnemyLevel();
+    CountLevel();
 
     // this method is called when the level loads
     virtual void onLoad(std::shared_ptr<LevelContext> context) override;
@@ -31,16 +31,18 @@ private:
 
 private:
     std::shared_ptr<GfxObject> m_bg;
-    std::shared_ptr<GfxObject> m_enemy;
+    std::shared_ptr<GfxObject> m_one;
+    std::shared_ptr<GfxObject> m_two;
     std::shared_ptr<GfxObject> m_ship;
 
     std::shared_ptr<TextObject> m_levelName;
 
     std::vector<std::shared_ptr<GfxObject>> m_bullets;
 
-    std::shared_ptr<Enemy> m_enemyActor;
+    std::shared_ptr<Enemy> m_enemyOne;
+    std::shared_ptr<Enemy> m_enemyTwo;
 };
 
 }
 
-#endif // ENEMY_LEVEL_H
+#endif // COUNT_LEVEL_H

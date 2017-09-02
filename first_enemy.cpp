@@ -5,9 +5,10 @@
 namespace dos_game
 {
 
-FirstEnemy::FirstEnemy(int width, int height) :
+FirstEnemy::FirstEnemy(int width, int height, const Point& pos) :
     m_width(width),
-    m_height(height)
+    m_height(height),
+    m_pos(pos)
 {
 }
 
@@ -28,6 +29,12 @@ void FirstEnemy::act(const Rect& playerPos, const std::vector<Rect>& bullets)
 void FirstEnemy::hurt(int amount)
 {
     m_health = std::max(0, m_health - amount);
+
+    if (isDead())
+    {
+        m_pos.y = -100;
+    }
+
 }
 
 Rect FirstEnemy::getBoundingBox()

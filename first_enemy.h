@@ -9,7 +9,7 @@ namespace dos_game
 class FirstEnemy : public Enemy
 {
 public:
-    FirstEnemy(int width, int height);
+    FirstEnemy(int width, int height, const Point& pos = {200, 40});
 
     // Enemy interface
     virtual void act(const Rect& playerPos, const std::vector<Rect>& bullets) override;
@@ -19,7 +19,7 @@ public:
     virtual bool isDead() override;
 
 private:
-    Point m_pos = {200, 40};
+    Point m_pos;
     int m_health = 5;
     int m_width;
     int m_height;

@@ -2,6 +2,8 @@
 #include "image_utils.h"
 #include "first_enemy.h"
 
+#include "stageclearlevel.h"
+
 namespace dos_game
 {
 
@@ -114,7 +116,8 @@ void EnemyLevel::act(std::shared_ptr<LevelContext> context)
 
     if (m_enemyActor->isDead())
     {
-        m_enemyActor = std::make_shared<FirstEnemy>(16, 16);
+        // go to next level
+        context->setActiveLevel(std::make_shared<StageClearLevel>());
     }
 
     m_enemyActor->act(m_ship->getBoundingBox(), bulletBounds);

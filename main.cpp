@@ -62,9 +62,9 @@ int game_main(int argc, char* argv[])
 
         auto engine = std::make_shared<Engine>(SCREEN_WIDTH, SCREEN_HEIGHT);
 
-        auto text = engine->createTextObject("GAME!!!!");
+        // auto text = engine->createTextObject("GAME!!!!");
 
-        text->pos = {10, 30};
+        // text->pos = {10, 30};
 
         LevelHolder levels(engine, std::make_shared<TitleScreen>());
 

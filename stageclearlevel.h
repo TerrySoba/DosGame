@@ -1,16 +1,15 @@
-#ifndef TITLE_SCREEN_H
-#define TITLE_SCREEN_H
+#ifndef STAGECLEARLEVEL_H
+#define STAGECLEARLEVEL_H
 
 #include "level_holder.h"
-#include <vector>
 
 namespace dos_game
 {
 
-class TitleScreen : public Level
+class StageClearLevel : public Level
 {
 public:
-    TitleScreen();
+    StageClearLevel();
 
     // this method is called when the level loads
     virtual void onLoad(std::shared_ptr<LevelContext> context) override;
@@ -24,12 +23,13 @@ public:
 
 private:
     std::shared_ptr<GfxObject> m_bg;
-    std::vector<std::shared_ptr<GfxObject>> m_enemies;
-    std::shared_ptr<TextObject> m_text;
-    size_t frameCount = 0;
+    std::shared_ptr<GfxObject> m_clear1;
+    std::shared_ptr<GfxObject> m_clear2;
+
+    Point m_speed = {0, 0};
 
 };
 
 }
 
-#endif // TITLE_SCREEN_H
+#endif // STAGECLEARLEVEL_H

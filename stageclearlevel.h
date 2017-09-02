@@ -3,13 +3,15 @@
 
 #include "level_holder.h"
 
+#include <time.h>
+
 namespace dos_game
 {
 
 class StageClearLevel : public Level
 {
 public:
-    StageClearLevel();
+    StageClearLevel(std::shared_ptr<Level> nextLevel);
 
     // this method is called when the level loads
     virtual void onLoad(std::shared_ptr<LevelContext> context) override;
@@ -28,6 +30,10 @@ private:
 
     Point m_speed = {0, 0};
 
+    decltype(uclock()) m_startTime;
+    int dy = 0;
+
+    std::shared_ptr<Level> m_nextLevel;
 };
 
 }

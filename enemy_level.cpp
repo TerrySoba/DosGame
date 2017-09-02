@@ -33,6 +33,9 @@ void EnemyLevel::onLoad(std::shared_ptr<LevelContext> context)
         m_bullets.push_back(context->getEngine()->createGfxObject(bulletImage, true));
         m_bullets.back()->pos = {-100, -100};
     }
+
+    context->getEngine()->playMusic("music/test.xm", true);
+
 }
 
 
@@ -117,7 +120,7 @@ void EnemyLevel::act(std::shared_ptr<LevelContext> context)
     if (m_enemyActor->isDead())
     {
         // go to next level
-        context->setActiveLevel(std::make_shared<StageClearLevel>());
+        context->setActiveLevel(std::make_shared<StageClearLevel>(std::make_shared<EnemyLevel>()));
     }
 
     m_enemyActor->act(m_ship->getBoundingBox(), bulletBounds);

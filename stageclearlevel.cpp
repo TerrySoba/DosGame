@@ -2,12 +2,14 @@
 
 #include "image_utils.h"
 
+#include <time.h>
+
 namespace dos_game
 {
 
-StageClearLevel::StageClearLevel()
+StageClearLevel::StageClearLevel(std::shared_ptr<Level> nextLevel) :
+    m_nextLevel(nextLevel)
 {
-
 }
 
 void StageClearLevel::onLoad(std::shared_ptr<LevelContext> context)
@@ -20,11 +22,12 @@ void StageClearLevel::onLoad(std::shared_ptr<LevelContext> context)
     m_clear2 = context->getEngine()->createGfxObject(clear2Image, true, 1);
 
 
-    m_clear1->pos = {70, 100};
-    m_clear2->pos = {30, 90};
+    m_clear1->pos = {70, 60};
+    m_clear2->pos = {40, 80};
 
     context->getEngine()->playMusic("music/victory.xm", false);
 
+    m_startTime = uclock();
 }
 
 void StageClearLevel::onExit(std::shared_ptr<LevelContext> context)
@@ -44,6 +47,20 @@ void StageClearLevel::act(std::shared_ptr<LevelContext> context)
     else --m_speed.y;
 
     m_clear2->pos = m_clear2->pos + m_speed;
+
+
+    if (((uclock() - m_startTime) / UCLOCKS_PER_SEC) > 4)
+    {
+        m_clear1->pos.y += dy;
+        dy++;
+    }
+
+    if (((uclock() - m_startTime) / UCLOCKS_PER_SEC) > 6)
+    {
+        context->setActiveLevel(m_nextLevel);
+        m_nextLevel.reset();
+    }
+
 
 }
 

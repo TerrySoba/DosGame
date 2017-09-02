@@ -29,6 +29,12 @@ struct GfxObject
     {
         return bitmap->h;
     }
+
+    Rect getBoundingBox()
+    {
+        return {pos.x, pos.y, bitmap->w, bitmap->h};
+    }
+
 };
 
 struct TextObject
@@ -60,6 +66,16 @@ public:
     void unloadText(std::shared_ptr<TextObject>);
 
     void drawScreen();
+
+    int screenWidth() const
+    {
+        return m_screenWidth;
+    }
+
+    int screenHeight() const
+    {
+        return m_screenHeight;
+    }
 
 private:
     int m_screenWidth;

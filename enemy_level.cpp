@@ -62,6 +62,7 @@ std::shared_ptr<GfxObject> EnemyLevel::getIdleBullet()
 
 void EnemyLevel::act(std::shared_ptr<LevelContext> context)
 {
+    // move player ship on keypresses
     auto& shipPos = m_ship->pos;
     if (key[KEY_LEFT] != 0)
     {
@@ -70,25 +71,40 @@ void EnemyLevel::act(std::shared_ptr<LevelContext> context)
     else if (key[KEY_RIGHT] != 0)
     {
         m_ship->pos = {shipPos.x + 2, shipPos.y};
-    }
+    }    
 
+    // limit horizontal movement of player ship
+    auto& engine = *context->getEngine();
+    if (shipPos.x < 0) shipPos.x = 0;
+    if (shipPos.x + m_ship->bitmap->w > engine.screenWidth())
+        shipPos.x = engine.screenWidth() - m_ship->bitmap->w;
+
+    // shoot on space key press
     if (key[KEY_SPACE] != 0)
     {
         auto bullet = getIdleBullet();
         if (bullet)
         {
-            auto& pos = m_ship->pos;
-            bullet->pos = pos;
+            bullet->pos = {shipPos.x + m_ship->width() / 2 - 2, shipPos.y};
         }
     }
 
-
+    // move bullets
     for (auto& bullet : m_bullets)
     {
         auto& pos = bullet->pos;
         bullet->pos = {pos.x, pos.y - 5};
     }
 
+    // check for bullet collisions
+    for (auto& bullet : m_bullets)
+    {
+        if (collision(bullet->getBoundingBox(), m_enemy->getBoundingBox()))
+        {
+            bullet->pos = {-100, -100};
+            m_enemy->pos = {100,100};
+        }
+    }
 }
 
 

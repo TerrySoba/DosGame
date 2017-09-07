@@ -20,7 +20,7 @@ TitleScreen::TitleScreen()
 void TitleScreen::onLoad(std::shared_ptr<LevelContext> context)
 {
     auto bgImage = loadBitmap("gfx/space_bg.pcx");
-    m_bg = context->getEngine()->createGfxObject(bgImage, false, -1);
+    context->getEngine()->setBgImage(bgImage);
 
     auto enemyImage = loadBitmap("gfx/enemy.pcx");
     for (size_t i = 0; i < 10; ++i)
@@ -37,7 +37,6 @@ void TitleScreen::onLoad(std::shared_ptr<LevelContext> context)
 // this method is called shortly before the level has ended
 void TitleScreen::onExit(std::shared_ptr<LevelContext> context)
 {
-    context->getEngine()->unloadGfx(m_bg);
     for (auto& enemy : m_enemies)
     {
         context->getEngine()->unloadGfx(enemy);

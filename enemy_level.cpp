@@ -18,7 +18,7 @@ EnemyLevel::EnemyLevel() :
 void EnemyLevel::onLoad(std::shared_ptr<LevelContext> context)
 {
     auto bgImage = loadBitmap("gfx/space_bg.pcx");
-    m_bg = context->getEngine()->createGfxObject(bgImage, false, -1);
+    context->getEngine()->setBgImage(bgImage);
 
     auto enemyImage = loadBitmap("gfx/enemy.pcx");
     m_enemy = context->getEngine()->createGfxObject(enemyImage, true);
@@ -49,7 +49,7 @@ void EnemyLevel::onExit(std::shared_ptr<LevelContext> context)
 {
     auto& engine = *context->getEngine();
 
-    engine.unloadGfx(m_bg);
+    // engine.unloadGfx(m_bg);
     engine.unloadGfx(m_enemy);
     engine.unloadGfx(m_ship);
     for (auto bullet : m_bullets)

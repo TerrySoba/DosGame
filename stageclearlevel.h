@@ -24,7 +24,6 @@ public:
     virtual void act(std::shared_ptr<LevelContext> context) override;
 
 private:
-    std::shared_ptr<GfxObject> m_bg;
     std::shared_ptr<GfxObject> m_clear1;
     std::shared_ptr<GfxObject> m_clear2;
 

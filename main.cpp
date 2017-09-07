@@ -46,19 +46,13 @@ int game_main(int argc, char* argv[])
 {
     try
     {
-//        MikmodSound sound;
-//        sound.play("music/test2.xm", true);
-//        sound.play("music/victory.xm", false);
-
         printf("Starting game!\n");
 
         initAllegro();
         set_color_depth(8);
 
-        if (set_gfx_mode(GFX_AUTODETECT, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0) != 0)
+        if (set_gfx_mode(GFX_AUTODETECT, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT * 2) != 0)
            THROW_EXCEPTION("Could not set gfx mode: " << allegro_error);
-
-        // install_int_ex(incrementTicks, BPS_TO_TIMER(120));
 
         setPaletteToGreen();
 
@@ -66,22 +60,13 @@ int game_main(int argc, char* argv[])
 
         engine->playMusic("music/test2.xm", true);
 
-        // auto text = engine->createTextObject("GAME!!!!");
-
-        // text->pos = {10, 30};
-
         LevelHolder levels(engine, std::make_shared<TitleScreen>());
 
         // enter event loop
         while(key[KEY_ESC]==0)
         {
-            // shipObj->setPos({100,100});
-            // bulletObj->setPos({20,20});
-
             levels.act();
-
             engine->drawScreen();
-            // sound.update();
         }
 
         set_gfx_mode(GFX_TEXT, 0, 0, 0, 0);

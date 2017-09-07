@@ -23,7 +23,6 @@ public:
     virtual void act(std::shared_ptr<LevelContext> context) override;
 
 private:
-    std::shared_ptr<GfxObject> m_bg;
     std::vector<std::shared_ptr<GfxObject>> m_enemies;
     std::shared_ptr<TextObject> m_text;
     size_t frameCount = 0;

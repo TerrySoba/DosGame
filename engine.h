@@ -8,6 +8,9 @@
 
 #include <memory>
 #include <set>
+#include <vector>
+
+#include <time.h>
 
 
 namespace dos_game
@@ -52,7 +55,15 @@ public:
     }
 };
 
-
+struct MyScreen
+{
+    int x;
+    int y;
+    int w;
+    int h;
+    std::vector<Rect> dirty;
+    BITMAP* myScreen;
+};
 
 class Engine
 {
@@ -64,6 +75,8 @@ public:
     std::shared_ptr<GfxObject> createGfxObject(std::shared_ptr<BITMAP> image, bool hasTransparency = false, int z = 0);
     void unloadGfx(std::shared_ptr<GfxObject>);
     void unloadText(std::shared_ptr<TextObject>);
+
+    void setBgImage(std::shared_ptr<BITMAP> bg);
 
     void drawScreen();
 
@@ -86,6 +99,14 @@ private:
     std::multiset<std::shared_ptr<TextObject>> m_textObjects;
     std::shared_ptr<BITMAP> m_buffer;
     MikmodSound m_sound;
+
+    std::shared_ptr<BITMAP> m_bg;
+
+    decltype(uclock()) m_startTime;
+    size_t m_frameCounter = 0;
+
+    std::vector<MyScreen> m_screens;
+    size_t m_currentScreen;
 };
 
 }

@@ -30,7 +30,7 @@ private:
 
 
 private:
-    std::shared_ptr<GfxObject> m_bg;
+    // std::shared_ptr<GfxObject> m_bg;
     std::shared_ptr<GfxObject> m_enemy;
     std::shared_ptr<GfxObject> m_ship;
 

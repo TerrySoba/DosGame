@@ -19,7 +19,7 @@ CountLevel::CountLevel() :
 void CountLevel::onLoad(std::shared_ptr<LevelContext> context)
 {
     auto bgImage = loadBitmap("gfx/space_bg.pcx");
-    m_bg = context->getEngine()->createGfxObject(bgImage, false, -1);
+    context->getEngine()->setBgImage(bgImage);
 
     auto oneImage = loadBitmap("gfx/one.pcx");
     m_one = context->getEngine()->createGfxObject(oneImage, true);
@@ -53,7 +53,6 @@ void CountLevel::onExit(std::shared_ptr<LevelContext> context)
 {
     auto& engine = *context->getEngine();
 
-    engine.unloadGfx(m_bg);
     engine.unloadGfx(m_one);
     engine.unloadGfx(m_two);
     engine.unloadGfx(m_ship);

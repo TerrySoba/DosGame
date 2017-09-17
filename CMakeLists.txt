@@ -23,6 +23,7 @@ add_executable(${PROJECT_NAME}.exe
     first_enemy.cpp
     stageclearlevel.cpp
     count_level.cpp
+    swing_level.cpp
     )
 
 

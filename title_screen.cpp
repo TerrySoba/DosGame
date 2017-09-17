@@ -3,6 +3,7 @@
 #include "image_utils.h"
 
 #include "enemy_level.h"
+#include "swing_level.h"
 
 #include "logging.h"
 
@@ -59,7 +60,7 @@ void TitleScreen::act(std::shared_ptr<LevelContext> context)
 
     if (key[KEY_SPACE] != 0)
     {
-        context->setActiveLevel(std::make_shared<EnemyLevel>());
+        context->setActiveLevel(std::make_shared<SwingLevel>());
     }
 }
 

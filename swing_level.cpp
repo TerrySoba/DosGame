@@ -2,6 +2,7 @@
 #include "count_level.h"
 #include "image_utils.h"
 #include "first_enemy.h"
+#include <cmath>
 
 #include "stageclearlevel.h"
 
@@ -22,6 +23,10 @@ void SwingLevel::onLoad(std::shared_ptr<LevelContext> context)
 
     auto enemyImage = loadBitmap("gfx/enemy.pcx");
     m_enemy = context->getEngine()->createGfxObject(enemyImage, true);
+
+    m_enemy->pos = {100,100};
+    m_speed = 1;
+    m_angle = 0;
 
     auto shipImage = loadBitmap("gfx/ship.pcx");
     m_ship = context->getEngine()->createGfxObject(shipImage, true);
@@ -77,63 +82,17 @@ std::shared_ptr<GfxObject> SwingLevel::getIdleBullet()
 
 void SwingLevel::act(std::shared_ptr<LevelContext> context)
 {
-    // move player ship on keypresses
-    auto& shipPos = m_ship->pos;
-    if (key[KEY_LEFT] != 0)
-    {
-        m_ship->pos = {shipPos.x - 2, shipPos.y};
-    }
-    else if (key[KEY_RIGHT] != 0)
-    {
-        m_ship->pos = {shipPos.x + 2, shipPos.y};
-    }
+    const auto c = 100;
 
-    // limit horizontal movement of player ship
-    auto& engine = *context->getEngine();
-    if (shipPos.x < 0) shipPos.x = 0;
-    if (shipPos.x + m_ship->bitmap->w > engine.screenWidth())
-        shipPos.x = engine.screenWidth() - m_ship->bitmap->w;
+    m_angle += m_speed/100;
 
-    // shoot on space key press
-    if (key[KEY_SPACE] != 0)
-    {
-        auto bullet = getIdleBullet();
-        if (bullet)
-        {
-            bullet->pos = {shipPos.x + m_ship->width() / 2 - 2, shipPos.y};
-        }
-    }
+    int x = std::sin(m_angle)*c;
+    int y = std::cos(m_angle)*c;
 
-    // move bullets
-    for (auto& bullet : m_bullets)
-    {
-        auto& pos = bullet->pos;
-        bullet->pos = {pos.x, pos.y - 5};
-    }
 
-    std::vector<Rect> bulletBounds;
+    m_enemy->pos = {x+100,y+100};
 
-    // check for bullet collisions
-    for (auto& bullet : m_bullets)
-    {
-        if (collision(bullet->getBoundingBox(), m_enemy->getBoundingBox()))
-        {
-            bullet->pos = {-100, -100};
-            // m_enemy->pos = {100,100};
-            m_enemyActor->hurt(1);
-        }
 
-        bulletBounds.push_back(bullet->getBoundingBox());
-    }
-
-    if (m_enemyActor->isDead())
-    {
-        // go to next level
-        context->setActiveLevel(std::make_shared<StageClearLevel>(std::make_shared<CountLevel>()));
-    }
-
-    m_enemyActor->act(m_ship->getBoundingBox(), bulletBounds);
-    m_enemy->pos = m_enemyActor->getPos();
 }
 
 

@@ -39,6 +39,9 @@ private:
     std::vector<std::shared_ptr<GfxObject>> m_bullets;
 
     std::shared_ptr<Enemy> m_enemyActor;
+
+    double m_speed;
+    double m_angle;
 };
 
 }
